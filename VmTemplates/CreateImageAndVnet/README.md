@@ -12,7 +12,9 @@ Configure the parameter file with appropriate values for imageUri(blob URI from 
 Command:
 
 $templateFile = "Path_to_template_file"
+
 $templateParameterFile = "Path_to_template_parameter_file"
+
 $RGName = "Resource_group_name"
 
 
