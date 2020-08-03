@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "WindowsVM46"
+        },
+        "adminUsername": {
+            "value": "Administrator"
+        },
+        "Password": {
+            "value": "Password1"
+        },
+        "imageName": {
+            "value": "image1"
+        },
+        "vmSize": {
+            "value": "Standard_D1_v2"
+        },
+        "vnetName": {
+            "value": "vnet1"
+        },
+        "subnetName": {
+            "value": "subnet1"
+        },
+        "nicName": {
+            "value": "nic46"
+        },
+        "privateIPAddress": {
+            "value": ""
+        },
+        "IPConfigName": {
+            "value": "ipconfig46"
+        }
+    }
+}
