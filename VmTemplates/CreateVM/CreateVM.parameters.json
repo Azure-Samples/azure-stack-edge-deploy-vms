@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "WindowsVM46"
+            "value": "WindowsVM"
         },
         "adminUsername": {
             "value": "Administrator"
@@ -24,13 +24,13 @@
             "value": "subnet1"
         },
         "nicName": {
-            "value": "nic46"
+            "value": "nic1"
         },
         "privateIPAddress": {
             "value": ""
         },
         "IPConfigName": {
-            "value": "ipconfig46"
+            "value": "ipconfig1"
         }
     }
 }
