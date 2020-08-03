@@ -10,12 +10,18 @@ Deployment Steps:
 Configure the parameter file with appropriate values for imageUri(blob URI from step 3), osType, addressPrefix and subnetPrefix.
 
 Command:
+
 $templateFile = "Path_to_template_file"
 $templateParameterFile = "Path_to_template_parameter_file"
 $RGName = "Resource_group_name"
 
+
 New-AzureRmResourceGroupDeployment `
+
     -ResourceGroupName $RGName `
+    
     -TemplateFile $templateFile `
+    
     -TemplateParameterFile $templateParameterFile `
+    
     -Name "Deployment1"
