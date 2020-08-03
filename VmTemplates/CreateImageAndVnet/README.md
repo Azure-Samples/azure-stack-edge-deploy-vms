@@ -17,13 +17,9 @@ $templateParameterFile = "Path_to_template_parameter_file"
 
 $RGName = "Resource_group_name"
 
-
+```powershell
 New-AzureRmResourceGroupDeployment `
-
     -ResourceGroupName $RGName `
-    
     -TemplateFile $templateFile `
-    
     -TemplateParameterFile $templateParameterFile `
-    
     -Name "Deployment1"
