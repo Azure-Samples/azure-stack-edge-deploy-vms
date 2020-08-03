@@ -10,9 +10,9 @@ products:
 
 ---
 
-# Deploying VMs using the CLI and Python
+# Deploying VMs on your Azure Stack Edge device
 
-This sample shows how to create and manage a VM on your Azure Stack Edge device using Azure Command Line Interface (CLI) and Python.
+This repository has script/template samples that help you deploy VMs on your Azure Stack Edge device.
 
 <!-- 
 Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
@@ -24,18 +24,20 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 
 ## Contents
 
-Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
+Here are the samples in this repository that you can use to deploy VMs on your Azure Stack Edge device.
 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
+| `PythonScripts`             | Sample Python script to deploy VMs.                        |
+| `AzurePowerShellScripts`             | Sample Azure PowerShell script to deploy VMs.                        |
+| `VmTemplates`             | Sample templates and parameter files to deploy VMs.                        |
 | `.gitignore`      | Define what to ignore at commit time.      |
 | `CHANGELOG.md`    | List of changes to the sample.             |
 | `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
 | `README.md`       | This README file.                          |
-| `LICENSE`         | The license for the sample.                |
+| `LICENSE`         | The license for the samples/templates.                |
 
-## Prerequisites
+<!--## Prerequisites
 
 Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
 
@@ -63,4 +65,13 @@ provided by the bot. You will only need to do this once across all repos using o
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.-->
+
+## Resources
+
+- Learn more about Azure Stack Edge, see What is Azure Stack Edge?
+- Learn more about how to deploy VMs on Azure Stack Edge, see: 
+    - [Deploy VMs via Azure PowerShell Script](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-powershell-script?branch=release-tzl).
+    - [Deploy VMs via Python/Azure CLI](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-cli-python?branch=release-tzl).
+    - [Deploy VMs via VM templates]().
+    - [Deploy VMs via Azure PowerShell cmdlets](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-powershell?branch=release-tzl).
