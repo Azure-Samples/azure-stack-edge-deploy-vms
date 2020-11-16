@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "apiProfile": "2018-03-01-hybrid",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing VM to apply Linux custom script to"
+      }
+    },
+    "extensionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the extension"
+      }
+    },
+    "publisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Publisher of the extension"
+      }
+    },
+    "type": {
+      "type": "string",
+      "metadata": {
+        "description": "Type of the extension"
+      }
+    },
+    "typeHandlerVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Type handler of the extension"
+      }
+    },
+    "settings": {
+      "type": "object",
+      "metadata": {
+        "description": "Settings for extension"
+      }
+    }
+  },
+  "variables": {
+    "extensionName": "[concat(parameters('vmName'),'/',parameters('extensionName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[variables('extensionName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "[parameters('publisher')]",
+        "type": "[parameters('type')]",
+        "typeHandlerVersion": "[parameters('typeHandlerVersion')]",
+        "autoUpgradeMinorVersion": true,
+        "settings": "[parameters('settings')]"
+      }
+    }
+  ],
+  "outputs": {}
+}

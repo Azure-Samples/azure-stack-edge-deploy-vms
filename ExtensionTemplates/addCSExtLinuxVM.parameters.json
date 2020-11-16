@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "Linuxvm" 
+        },
+        "extensionName": {
+            "value": "LinuxCustomScriptExtension" 
+        },
+        "publisher": {
+            "value": "Microsoft.Azure.Extensions" 
+        },
+        "type": {
+            "value": "CustomScript" 
+        },
+        "typeHandlerVersion": {
+            "value": "2.0" 
+        },
+        "settings": {
+            "value": {
+                "commandToExecute" : "sudo echo 'some text' >> /home/Administrator/file2.txt"
+            }
+        }
+    }
+}

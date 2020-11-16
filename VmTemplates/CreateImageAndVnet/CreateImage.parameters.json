@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "osType": {
+      "value": "Windows"
+    },
+    "imageName": {
+      "value": "Windowsimg1"
+    },
+    "imageUri": {
+      "value": "https://sa1.blob.dbe-1dkphq2.microsoftdatabox.com/con1/WindowsServer2019_30GB.vhd"
+    }
+  }
+}

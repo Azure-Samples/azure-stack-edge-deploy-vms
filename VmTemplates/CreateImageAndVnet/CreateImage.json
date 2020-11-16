@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "apiProfile": "2018-03-01-hybrid",
+  "parameters": {
+    "osType": {
+      "type": "string",
+      "metadata": {
+        "description": "OS type of the image"
+      }
+    },
+    "imageName": {
+      "type": "string",
+      "defaultValue": "myimage",
+      "metadata": {
+        "description": "Maps to the Image Name"
+      }
+    },
+    "imageUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Uri of the Image "
+      }
+    }
+  },
+  "variables": {
+    "location": "dbelocal"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/images",
+      "apiVersion": "2017-03-30",
+      "name": "[parameters('ImageName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "storageProfile": {
+          "osDisk": {
+            "osType": "[parameters('osType')]",
+            "osState": "Generalized",
+            "blobUri": "[parameters('imageUri')]",
+            "storageAccountType": "Standard_LRS",
+            "caching": "ReadWrite"
+          }
+        }
+      }
+    }
+  ]
+}
