@@ -6,7 +6,7 @@
     "vmName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the existing VM to apply Linux custom script to"
+        "description": "Name of the existing VM to add custom script extension to"
       }
     },
     "extensionName": {
