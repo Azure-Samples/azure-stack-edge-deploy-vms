@@ -5,8 +5,6 @@ This template creates a virtual machine from the existing image and virtual netw
 Pre-requisites:
 1) Create an image and Virtual Network from the template CreateImageAndVnet.json
 
-https://github.com/Azure-Samples/azure-stack-edge-deploy-vms/blob/users/niachary/autovnettemplates/VmTemplates/CreateImage/readme.md
-
 Deployment Steps:
 1) Configure the parameter file with appropriate values for the parameters.
 2) Give the same name for the image and the vnet as created by the template CreateImageAndVnet.json
@@ -29,6 +27,8 @@ New-AzureRmResourceGroupDeployment `
 ** Refer to this section if you are using a build for and after Nov release**
 ---------------------------------------------------------------------------------------------------------------------------------
 1) Create an image from the template CreateImage.json
+
+https://github.com/Azure-Samples/azure-stack-edge-deploy-vms/blob/users/niachary/autovnettemplates/VmTemplates/CreateImage/readme.md
 
 2) Run this command to get the VNet and Subnet name for existing Virtual Network
 
