@@ -40,8 +40,8 @@ Output:
 PS C:\Users\niachary> Get-AzureRmVirtualNetwork
 
 
-**Name                   : ASEVNET**
-**ResourceGroupName      : ASERG**
+Name                   : ASEVNET
+ResourceGroupName      : ASERG
 Location               : dbelocal
 Id                     : /subscriptions/b7fcb312-915d-4fd0-aff9-87035c3e5a3a/resourceGroups/ASERG/providers/Microsoft.Network/virtualNetworks/ASEVNET
 Etag                   : W/"c790df21-d690-4cd9-b6b2-a729e9ad743a"
@@ -56,7 +56,7 @@ AddressSpace           : {
 DhcpOptions            : null
 Subnets                : [
                            {
-                             **"Name": "ASEVNETsubNet",**
+                             "Name": "ASEVNETsubNet",
                              "Etag": "W/\"c790df21-d690-4cd9-b6b2-a729e9ad743a\"",
                              "Id": "/subscriptions/b7fcb312-915d-4fd0-aff9-87035c3e5a3a/resourceGroups/ASERG/providers/Microsoft.Network/virtualNetworks/ASEVNET/subnets/ASEVNETsubNet",
                              "AddressPrefix": "10.178.68.0/22",
