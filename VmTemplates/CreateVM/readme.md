@@ -30,7 +30,7 @@ New-AzureRmResourceGroupDeployment `
 ---------------------------------------------------------------------------------------------------------------------------------
 1) Create an image from the template CreateImage.json
 
-Run this command to get the VNet and Subnet name for existing Virtual Network
+2) Run this command to get the VNet and Subnet name for existing Virtual Network
 
 Command:
 Get-AzureRmVirtualNetwork
@@ -62,7 +62,7 @@ Subnets                : [
                              "AddressPrefix": "10.178.68.0/22",
 
 ```
-Pass the VNet name, Subnet Name and Vnet resource group name in the CreateVM.parameters.json section as so:
+3) Pass the VNet name, Subnet Name and Vnet resource group name in the CreateVM.parameters.json section as so:
 
 "vnetName": {
       "value": "ASEVNET"
