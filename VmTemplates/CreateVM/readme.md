@@ -62,7 +62,7 @@ Subnets                : [
                              "AddressPrefix": "10.178.68.0/22",
 
 ```
-Pass the VNet name, Subnet Name and Vnet resource group name in the parameter section as so:
+Pass the VNet name, Subnet Name and Vnet resource group name in the CreateVM.parameters.json section as so:
 
 "vnetName": {
       "value": "ASEVNET"
