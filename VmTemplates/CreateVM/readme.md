@@ -36,7 +36,7 @@ Command:
 Get-AzureRmVirtualNetwork
 
 Output:
-
+```
 PS C:\Users\niachary> Get-AzureRmVirtualNetwork
 
 
@@ -61,7 +61,7 @@ Subnets                : [
                              "Id": "/subscriptions/b7fcb312-915d-4fd0-aff9-87035c3e5a3a/resourceGroups/ASERG/providers/Microsoft.Network/virtualNetworks/ASEVNET/subnets/ASEVNETsubNet",
                              "AddressPrefix": "10.178.68.0/22",
 
-
+```
 Pass the VNet name, Subnet Name and Vnet resource group name in the parameter section as so:
 
 "vnetName": {
