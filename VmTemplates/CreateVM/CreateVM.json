@@ -42,6 +42,12 @@
 				"description": "Name of the Virtual Network"
 			}
 		},
+		"vnetRG": {
+			"type": "string",
+			"metadata": {
+				"description": "Resource Group for the Virtual Network"
+			}
+		},
 		"subnetName": {
 			"type": "string",
 			"metadata": {
@@ -69,7 +75,7 @@
 	},
 	"variables": {
 		"location": "dbelocal",
-		"vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+		"vnetID": "[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
 		"subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
 	},
 	"resources": [

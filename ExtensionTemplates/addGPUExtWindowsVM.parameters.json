@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "WindowsVM" 
+        },
+        "extensionName": {
+            "value": "windowsgpuext" 
+        },
+        "publisher": {
+            "value": "Microsoft.HpcCompute" 
+        },
+        "type": {
+            "value": "NvidiaGpuDriverWindows" 
+        },
+        "typeHandlerVersion": {
+            "value": "1.3" 
+        },
+        "settings": {
+            "value": {
+            "DriverURL" : "http://us.download.nvidia.com/tesla/442.50/442.50-tesla-desktop-winserver-2019-2016-international.exe",
+            "DriverCertificateUrl" : "https://go.microsoft.com/fwlink/?linkid=871664",
+            "DriverType":"CUDA"
+            }
+        }
+    }
+}
