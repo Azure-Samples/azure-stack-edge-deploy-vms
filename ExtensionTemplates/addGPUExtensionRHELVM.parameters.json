@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "LinuxVM" 
+        },
+        "extensionName": {
+            "value": "gpuext" 
+        },
+        "publisher": {
+            "value": "Microsoft.HpcCompute" 
+        },
+        "type": {
+            "value": "NvidiaGpuDriverLinux" 
+        },
+        "typeHandlerVersion": {
+            "value": "1.3" 
+        },
+        "settings": {
+            "value": {
+                    "isCustomInstall":true,
+                    "DRIVER_URL":"https://go.microsoft.com/fwlink/?linkid=874273",
+                    "CUDA_ver":"10.0.130",
+                    "PUBKEY_URL":"http://download.microsoft.com/download/F/F/A/FFAC979D-AD9C-4684-A6CE-C92BB9372A3B/7fa2af80.pub",
+                    "DKMS_URL":"https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm",
+                    "LIS_URL":"https://aka.ms/lis",
+                    "LIS_RHEL_ver":"3.10.0-1062.9.1.el7"
+            }
+        }
+    }
+}
