@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "Ubuntu1804VMFromSnapshot" 
+        },
+        "vmSize": {
+            "value": "Standard_D1_v2"
+        },
+        "vnetName": {
+            "value": "asevnet" 
+        },
+        "vnetRG": {
+            "value": "aserg" 
+        },
+        "subnetName": {
+            "value": "asevnetsubnet" 
+        },
+        "osdiskName": {
+            "value": "ubuntuosdisk" 
+        },
+        "VHDUri": {
+            "value": "https://sa1.blob.dbe-hvqc1t2.microsoftdatabox.com/con1/ubuntu1804testsnapshot.vhd"
+        },
+        "nicName": {
+            "value": "ubuntunic" 
+        },
+        "IPConfigName": {
+            "value": "ipconfigubuntu" 
+        },
+        "privateIPAddress": {
+            "value": "" 
+        },
+        "osType": {
+            "value": "Linux"
+        }
+    }
+}
