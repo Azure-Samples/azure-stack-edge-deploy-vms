@@ -8,7 +8,9 @@ AZURE_CLIENT_SECRET: your Azure Active Directory Application Secret
 AZURE_SUBSCRIPTION_ID: your Azure Subscription Id
 AZURE_RESOURCE_LOCATION: your resource location
 ARM_ENDPOINT: your cloud's resource manager endpoint
-VHD_FILE_PATH
+VHD_FILE_PATH: the path to the vhd for the vm
+ADDRESS_PREFIXES: the address prefix
+PRIVATE_IP_ADDRESS: the private ip address
 """
 import logging
 import os
