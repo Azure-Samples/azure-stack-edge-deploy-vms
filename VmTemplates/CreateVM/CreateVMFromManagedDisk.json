@@ -1,0 +1,144 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"apiProfile": "2018-03-01-hybrid",
+	"parameters": {
+		"vmName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the VM"
+			}
+		},
+		"vmSize": {
+			"type": "string",
+			"defaultValue": "Standard_D1_v2",
+			"metadata": {
+				"description": "The size of the Virtual Machine."
+			}
+		},
+		"vnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Virtual Network"
+			}
+		},
+		"vnetRG": {
+			"type": "string",
+			"metadata": {
+				"description": "Resource Group for the Virtual Network"
+			}
+		},
+		"subnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Subnet"
+			}
+		},
+        "osdiskName" :{
+            "type": "string",
+			"metadata": {
+				"description": "Name of the OS Disk"
+			}
+        },
+        "VHDUri" :{
+            "type": "string",
+			"metadata": {
+				"description": "Blob URI of the VHD in local storage account"
+			}
+        },
+		"nicName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the Network Interface"
+			}
+		},
+		"IPConfigName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of IP config"
+			}
+		},
+		"privateIPAddress": {
+			"type": "string",
+			"metadata": {
+				"description": "Private ip address"
+			}
+		},
+        "osType": {
+			"type": "string",
+			"metadata": {
+				"description": "Os Type Linux/Windows"
+			}
+		}
+	},
+	"variables": {
+		"location": "dbelocal",
+		"vnetID": "[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+		"subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+	},
+	"resources": [
+		{
+			"apiVersion": "2017-10-01",
+			"type": "Microsoft.Network/networkInterfaces",
+			"name": "[parameters('nicName')]",
+			"location": "[variables('location')]",
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "[parameters('IPConfigName')]",
+						"properties": {
+							"privateIPAllocationMethod": "[if(equals(parameters('privateIPAddress'), ''), 'Dynamic', 'Static')]",
+							"subnet": {
+								"id": "[variables('subnetRef')]"
+							},
+							"privateIPAddress": "[parameters('privateIPAddress')]"
+						}
+					}
+				]
+			}
+		},
+        {
+        "type": "Microsoft.Compute/disks",
+        "apiVersion": "2017-03-30",
+        "name": "[parameters('osdiskName')]",
+        "location": "dbelocal",
+        "properties": {
+            "creationData": {
+                "createOption": "Import",
+                "sourceUri": "[parameters('VHDUri')]"
+            }
+        }
+        },
+		{
+			"apiVersion": "2017-03-30",
+			"type": "Microsoft.Compute/virtualMachines",
+			"name": "[parameters('vmName')]",
+			"location": "[variables('location')]",
+			"dependsOn": [
+				"[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]",
+                "[concat('Microsoft.Compute/disks/', parameters('osdiskName'))]"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "[parameters('vmSize')]"
+				},
+				"storageProfile": {
+                    "osDisk":{
+                        "managedDisk":{
+                            "id": "[resourceId('Microsoft.Compute/disks', parameters('osdiskName'))]"
+                        },
+                        "createOption" : "Attach",
+                        "osType" : "[parameters('osType')]"
+                    }
+				},
+				"networkProfile": {
+					"networkInterfaces": [
+						{
+							"id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+						}
+					]
+				}
+			}
+		}
+	]
+}
