@@ -48,7 +48,7 @@ namespace cloudscript
             innerDeployment.name = $"imageDeployment-{imageName}-{randomSuffix}";
             innerDeployment.properties.parameters.sourceBlobUri.value = blobUri;
             innerDeployment.properties.parameters.targetStorageAccountName.value = $"sa-{imageName}-{randomSuffix}";
-            innerDeployment.properties.parameters.targetContainerName.value = "vhds";
+            innerDeployment.properties.parameters.targetContainerName.value = $"vhds-{imageName}-{randomSuffix}";
             innerDeployment.properties.parameters.ingestionJobName.value = $"ingestionJob-{imageName}-{randomSuffix}";
             innerDeployment.properties.parameters.imageName.value = imageName;
             innerDeployment.properties.parameters.osType.value = osType;

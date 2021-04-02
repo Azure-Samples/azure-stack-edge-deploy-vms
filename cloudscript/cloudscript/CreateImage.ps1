@@ -67,7 +67,7 @@ function InitializeImageTemplateParameters($templateFilePath, $imageName, $image
     $suffix = (New-Guid).Guid.Split('-')[0]
     # Storage account name should not have capital letters
     $ingestionJobParams.targetStorageAccountName.value = "sa" + $suffix
-    $ingestionJobParams.targetContainerName.value = "vmimages"
+    $ingestionJobParams.targetContainerName.value = "vmimages" + $suffix
     $ingestionJobParams.ingestionJobName.value = "ingestionJob" + $suffix
     $template.properties.template.resources[1].name = "imageDeployment" + $suffix
     
