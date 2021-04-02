@@ -1,0 +1,20 @@
+﻿This is a script to create Virtual machines using template from Cloud.
+
+Dependencies:
+1. RestSharp
+2. Microsost.Rest.ClientRuntime
+3. Microsost.Rest.ClientRuntime.Azure
+4. Microsost.Rest.ClientRuntime.Azure.Authentication
+
+
+Steps:-
+
+1. Clone the repository.
+2. Open Visual Studio and open the <repo_path>\cloudscript\cloudscript.sln
+3. Build the solution
+4. When built successfully, go to binaries at  <repo_path>\cloudscript\cloudscript\bin\Release\net472\ . You will see cloudscript.dll and other dependent
+   dlls
+5. You need to load all the dlls above. Refer to LoadDlls function in <repo_path>\cloudscript\CreateImage.ps1
+6. You can use the default templates in this repo at <repo_path>\cloudscript\Templates to create a sample image from a blob saas uri and a simple VM.
+7. If you have a custom template, you can try to use that as well. Please refer to <repo_path>\cloudscript\CreateVM.ps1 on how to invoke any template
+   through powershell. Refer to <repo_path>\cloudscript\CreateVM.cs if you want to invoke through powershell.
