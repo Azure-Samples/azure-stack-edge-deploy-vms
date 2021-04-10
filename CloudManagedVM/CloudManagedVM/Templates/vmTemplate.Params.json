@@ -1,0 +1,45 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rgName": {
+      "value": "RG1"
+    },
+    "vmName": {
+      "value": "vm1"
+    },
+    "adminUsername": {
+      "value": "Administrator"
+    },
+    "Password": {
+      "value": "Password123"
+    },
+    "imageName": {
+      "value": "image1"
+    },
+    "imageRG": {
+      "value": "RG1"
+    },
+    "vmSize": {
+      "value": "Standard_D1_V2"
+    },
+    "vnetName": {
+      "value": ""
+    },
+    "vnetRG": {
+      "value": ""
+    },
+    "subnetName": {
+      "value": ""
+    },
+    "nicName": {
+      "value": "nic-vm1-abc123"
+    },
+    "IPConfigName": {
+      "value": "ipconfig-vm1-abc123"
+    },
+    "privateIPAddress": {
+      "value": ""
+    }
+  }
+}

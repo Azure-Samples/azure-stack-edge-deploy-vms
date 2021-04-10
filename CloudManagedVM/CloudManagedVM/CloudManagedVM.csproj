@@ -1,15 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyName>cloudscript</AssemblyName>
-    <PackageId>cloudscript</PackageId>
+    <AssemblyName>CloudManagedVM</AssemblyName>
+    <PackageId>CloudManagedVM</PackageId>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Templates\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.22" />
@@ -28,7 +24,13 @@
     <None Update="Templates\imageTemplate.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Templates\imageTemplate.Params.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\vmTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\vmTemplate.Params.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

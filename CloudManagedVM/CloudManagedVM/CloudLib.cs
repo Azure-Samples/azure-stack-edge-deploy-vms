@@ -7,26 +7,28 @@ using RestSharp;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
-namespace cloudscript
+namespace CloudManagedVM
 {
     public class CloudLib
     {
         static string TenantId;
         static string ClientId;
-        static string AccessKey;
         static string SubscriptionId;
         static string ArmEndpoint = "https://management.azure.com/";
         static string Token;
+        static string SAAS_API_VERSION = "2020-06-01-preview";
+        static string LINKED_API_VERSION = "2018-09-01";
+        static string SAAS_ASE_RESOURCE_API_VERSION = "2020-09-01";
         IRestClient Client;
 
         public CloudLib(string accessKey, string tenantId, string clientId, string subscriptionId)
         {
-            AccessKey = accessKey;
             TenantId = tenantId;
             ClientId = clientId;
             SubscriptionId = subscriptionId;
-            var task = GetAzureAccessTokenAsync(TenantId, ClientId, AccessKey);
+            var task = GetAzureAccessTokenAsync(TenantId, ClientId, accessKey);
             Token = task.GetAwaiter().GetResult();
             Client = new RestClient(ArmEndpoint);
         }
@@ -36,59 +38,26 @@ namespace cloudscript
         /// <summary>
         /// Get Azure Stack Edge (ASE) resource details.
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
-        /// <param name="resourceGroup">Saas Resource Group containing ASE device</param>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <returns>ASE resource details</returns>
-        public String GetAseResource(string deviceName, string resourceGroup)
+        public String GetAseResource(string saasDeviceName, string saasResourceGroup)
         {
-            Console.WriteLine($"Fetching the ASE resource object for device {deviceName}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{resourceGroup}/providers/Microsoft.DataboxEdge/dataBoxEdgeDevices/{deviceName}";
-
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-            try
-            {
-                while (timer.Elapsed < TimeSpan.FromMinutes(1))
-                {
-                    IRestResponse response = MakeRestCallWithRetry(uri, "2020-09-01");
-                    dynamic resp = JObject.Parse(response.Content);
-                    try
-                    {
-                        String edgeSubId = resp.properties.edgeProfile.subscription.subscriptionId;
-                        String regId = resp.properties.edgeProfile.subscription.registrationId;
-                        if (String.IsNullOrEmpty(edgeSubId) || String.IsNullOrEmpty(regId))
-                        {
-                            // Sleep for 5 seconds and retry fetching ase resource
-                            Console.WriteLine("No EdgeSubscriptionId or RegistrationId present. Sleeping for 5 seconds before retrying");
-                            System.Threading.Thread.Sleep(5000);
-                            continue;
-                        }
-                        return response.Content;
-                    }
-                    catch (RuntimeBinderException)
-                    {
-                        // Sleep for 5 seconds and retry fetching ase resource
-                        Console.WriteLine("No EdgeSubscriptionId or RegistrationId present. Sleeping for 5 seconds before retrying");
-                        System.Threading.Thread.Sleep(5000);
-                    }
-                }
-            }
-            finally
-            {
-                timer.Stop();
-            }
-            throw new TimeoutException($"No Edge Subscription Id present for device {deviceName}. Timed out after a minute");
+            Console.WriteLine($"Fetching the ASE resource object for device {saasDeviceName}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.DataboxEdge/dataBoxEdgeDevices/{saasDeviceName}";
+            IRestResponse response = MakeRestCallWithRetry(uri, SAAS_ASE_RESOURCE_API_VERSION);
+            return response.Content;
         }
 
         /// <summary>
-        /// Get Edge Subscription id of ASE device
+        /// Get LinkedSubscriptionId of ASE device
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
-        /// <param name="resourceGroup">Saas Resource Group containing ASE device</param>
-        /// <returns>Edge Subscription Id of ASE device</returns>
-        public String GetEdgeSubscriptionId(string deviceName, string resourceGroup)
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
+        /// <returns>LinkedSubscriptionId of ASE device</returns>
+        public String GetLinkedSubscriptionId(string saasDeviceName, string saasResourceGroup)
         {
-            string response = GetAseResource(deviceName, resourceGroup);
+            string response = GetAseResource(saasDeviceName, saasResourceGroup);
             dynamic resp = JObject.Parse(response);
             return resp.properties.edgeProfile.subscription.subscriptionId;
         }
@@ -96,47 +65,47 @@ namespace cloudscript
         /// <summary>
         /// Get local resources on ASE device
         /// </summary>
-        /// <param name="resourceType">Type of the resource e.g. "Microsoft.Compute/images"</param>
-        /// <param name="resourceName">Name of the resource on device</param>
+        /// <param name="linkedResourceType">Type of the resource e.g. "Microsoft.Compute/images"</param>
+        /// <param name="linkedResourceName">Name of the resource on device</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <returns>Resource object on the ASE device</returns>
-        public string GetEdgeResource(string resourceType, string resourceName, string edgeResourceGroup, string saasResourceGroup, string edgeSubId)
+        public string GetLinkedResource(string linkedResourceType, string linkedResourceName, string linkedResourceGroup, string saasResourceGroup, string linkedSubId)
         {
-            Console.WriteLine($"Getting resource {resourceName} of type {resourceType} for edge {edgeSubId} under saas resource group {saasResourceGroup} and edge resource group {edgeResourceGroup}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourceGroups/{edgeResourceGroup}/linkedproviders/{resourceType}/{resourceName}";
-            IRestResponse response = MakeRestCallWithRetry(uri, "2020-06-01-preview");
+            Console.WriteLine($"Getting resource {linkedResourceName} of type {linkedResourceType} for edge {linkedSubId} under saas resource group {saasResourceGroup} and linked resource group {linkedResourceGroup}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{linkedResourceGroup}/linkedproviders/{linkedResourceType}/{linkedResourceName}";
+            IRestResponse response = MakeRestCallWithRetry(uri, SAAS_API_VERSION);
 
             return response.Content;
         }
 
         /// <summary>
-        /// Get resource group on ASE device
+        /// Get linked resource group on ASE device
         /// </summary>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
+        /// <param name="linkedResourceGroup">Resource Group on device</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <returns>Resource Group object on ASE device</returns>
-        public string GetEdgeResourceGroup(string edgeResourceGroup, string saasResourceGroup, string edgeSubId)
+        public string GetLinkedResourceGroup(string linkedResourceGroup, string saasResourceGroup, string linkedSubId)
         {
-            Console.WriteLine($"Getting resource group {edgeResourceGroup} on edge {edgeSubId} under Saas resource group {saasResourceGroup}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}";
-            IRestResponse response = MakeRestCallWithRetry(uri, "2020-06-01-preview");
+            Console.WriteLine($"Getting resource group {linkedResourceGroup} on edge {linkedSubId} under Saas resource group {saasResourceGroup}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{linkedResourceGroup}";
+            IRestResponse response = MakeRestCallWithRetry(uri, SAAS_API_VERSION);
             return response.Content;
         }
 
         /// <summary>
-        /// Get all local resources of a given type on ASE device
+        /// Get all linked resources of a given type on ASE device
         /// </summary>
-        /// <param name="resourceType">Type of the resource e.g. "Microsoft.Compute/images"</param>
+        /// <param name="linkedResourceType">Type of the resource e.g. "Microsoft.Compute/images"</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <returns>Resource objects on ASE device</returns>
-        public string GetAllResourcesByTypeOnDevice(string saasResourceGroup, string edgeSubId, string resourceType)
+        public string GetAllLinkedResourcesByType(string saasResourceGroup, string linkedSubId, string linkedResourceType)
         {
-            Console.WriteLine($"Getting all resources of type {resourceType} on edge device with subscription id {edgeSubId} under resource group {saasResourceGroup}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedproviders/{resourceType}";
-            IRestResponse response = MakeRestCallWithRetry(uri, "2020-06-01-preview");
+            Console.WriteLine($"Getting all resources of type {linkedResourceType} on edge device with subscription id {linkedSubId} under resource group {saasResourceGroup}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedproviders/{linkedResourceType}";
+            IRestResponse response = MakeRestCallWithRetry(uri, SAAS_API_VERSION);
             return response.Content;
         }
 
@@ -144,13 +113,13 @@ namespace cloudscript
         /// Trigger a template deployment from Saas.
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="deviceName">ASE device name</param>
+        /// <param name="saasDeviceName">ASE device name</param>
         /// <param name="template">Json template to be deployed</param>
         /// <param name="deploymentName">Name of Saas deployment</param>
         /// <returns>None if deployment succeeds else throws exception</returns>
-        public void DeployTemplate(string saasResourceGroup, string deviceName, string template, string deploymentName = "")
+        public void DeployTemplate(string saasResourceGroup, string saasDeviceName, string template, string deploymentName = "")
         {
-            Console.WriteLine($"Deploying template under Saas ResourceGroup {saasResourceGroup} on ASE device {deviceName}");
+            Console.WriteLine($"Deploying template under Saas ResourceGroup {saasResourceGroup} on ASE device {saasDeviceName}");
             // Generate deployment name dynamically if not provided
             if (String.IsNullOrEmpty(deploymentName))
             {
@@ -158,9 +127,9 @@ namespace cloudscript
             }
             Console.WriteLine($"Deployment {deploymentName} is deploying template: {template}");
 
-            string edgeSubId = GetEdgeSubscriptionId(deviceName, saasResourceGroup);
-            string deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
-            IRestResponse response = MakeRestCall(deploymentUri, Method.PUT, "2020-06-01-preview", body: template);
+            string linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            string deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            IRestResponse response = MakeRestCall(deploymentUri, Method.PUT, SAAS_API_VERSION, body: template);
 
             var statusUri = GetAzureAsyncHeader(response);
 
@@ -185,7 +154,7 @@ namespace cloudscript
                     try
                     {
                         statusResponse = MakeRestCallWithRetry(statusUri);
-                        PollForDeployments(saasResourceGroup, edgeSubId, deploymentUri);
+                        PollForDeployments(saasResourceGroup, linkedSubId, deploymentUri);
                     }
                     catch (Exception exc)
                     {
@@ -216,7 +185,7 @@ namespace cloudscript
             // Sometimes if AzureArmAgent crashes or restarts, we may get timed out while polling for status uri above.
             // We will check for the deployment resource once to confirm if things actually worked or not.
             Console.WriteLine($"Timed out after {deploymentTimeout} mins while waiting for statusURI to return Succeeded. Checking for deployment {deploymentName} status");
-            response = MakeRestCallWithRetry(deploymentUri, "2020-06-01-preview");
+            response = MakeRestCallWithRetry(deploymentUri, SAAS_API_VERSION);
             resp = JObject.Parse(response.Content);
             status = resp.properties.provisioningState;
             Console.WriteLine($"Deployment {deploymentName} provisioning state: {status}");
@@ -276,144 +245,210 @@ namespace cloudscript
         /// <summary>
         /// Start a VM.
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
+        /// <param name="saasDeviceName">ASE device name</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
         /// <returns>None</returns>
-        public void StartVM(string deviceName, string saasResourceGroup, string vmName, string edgeResourceGroup)
+        public void StartVM(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup)
         {
-            Console.WriteLine($"Starting the VM {vmName}, RG {edgeResourceGroup}");
-            string response1 = GetAseResource(deviceName, saasResourceGroup);
-            dynamic resp1 = JObject.Parse(response1);
-            String edgeSubId = resp1.properties.edgeProfile.subscription.subscriptionId;
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}/start";
-            IRestResponse responsePost = MakeRestCall(uri, Method.POST, "2020-06-01-preview");
-            PollForStatus(responsePost, "Starting the VM");
+            Console.WriteLine($"Starting VM {vmName}, RG {vmResourceGroup}");
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{vmResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}/start";
+            IRestResponse responsePost = MakeRestCall(uri, Method.POST, SAAS_API_VERSION);
+            PollForStatus(responsePost, $"Starting VM {vmName}");
         }
 
         /// <summary>
         /// Stop a VM.
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
+        /// <param name="saasDeviceName">ASE device name</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
         /// <param name="stayProvisioned">whether VM should be stay provisioned or deallocated</param>
         /// <returns></returns>
-        public void StopVM(string deviceName, string saasResourceGroup, string vmName, string edgeResourceGroup, bool stayProvisioned = true)
+        public void StopVM(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup, bool stayProvisioned = true)
         {
-            Console.WriteLine($"Stopping the VM {vmName}, RG {edgeResourceGroup} with stayProvisioned set to {stayProvisioned}");
-            string response1 = GetAseResource(deviceName, saasResourceGroup);
-            dynamic resp1 = JObject.Parse(response1);
-            String edgeSubId = resp1.properties.edgeProfile.subscription.subscriptionId;
+            Console.WriteLine($"Stopping VM {vmName}, RG {vmResourceGroup} with stayProvisioned set to {stayProvisioned}");
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
             String vmAction = stayProvisioned ? "powerOff" : "deallocate";
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}/{vmAction}";
-            IRestResponse responsePost = MakeRestCall(uri, Method.POST, "2020-06-01-preview");
-            PollForStatus(responsePost, $"Stopping the VM ({vmAction})");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{vmResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}/{vmAction}";
+            IRestResponse responsePost = MakeRestCall(uri, Method.POST, SAAS_API_VERSION);
+            PollForStatus(responsePost, $"Stopping the VM {vmName}({vmAction})");
         }
 
         /// <summary>
-        /// Deleting VM by deleting resource group
+        /// Restart a VM.
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
+        /// <param name="saasDeviceName">ASE device name</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
         /// <returns></returns>
-        public void DeleteRG(string deviceName, string saasResourceGroup, string vmName, string edgeResourceGroup)
+        public void RestartVM(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup)
         {
-            Console.WriteLine($"Deleting the RG {edgeResourceGroup}");
-            string response = GetAseResource(deviceName, saasResourceGroup);
-            dynamic resp = JObject.Parse(response);
-            String edgeSubId = resp.properties.edgeProfile.subscription.subscriptionId;
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}";
-            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, "2020-06-01-preview", "2018-09-01");
-            PollForStatus(responseDelete, $"Deleting vm {vmName} in edge resource group {edgeResourceGroup}", 30);
+            Console.WriteLine($"Restarting VM {vmName}, RG {vmResourceGroup}");
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{vmResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}/restart";
+            IRestResponse responsePost = MakeRestCall(uri, Method.POST, SAAS_API_VERSION);
+            PollForStatus(responsePost, $"Restarting VM ({vmName})");
+        }
+
+        /// <summary>
+        /// Delete linked resource group
+        /// </summary>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
+        /// <param name="linkedResourceGroup">Resource Group on device</param>
+        /// <returns></returns>
+        public void DeleteLinkedResourceGroup(string saasDeviceName, string saasResourceGroup, string linkedResourceGroup)
+        {
+            Console.WriteLine($"Deleting linked resource group {linkedResourceGroup}");
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{linkedResourceGroup}";
+            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, SAAS_API_VERSION, LINKED_API_VERSION);
+            PollForStatus(responseDelete, $"Deleting linked resource group {linkedResourceGroup}", 30);
         }
 
         /// <summary>
         /// Deleting VM and its related resources recursively.
         /// </summary>
-        /// <param name="deviceName">ASE device name</param>
-        /// <param name="resourceGroup"></param>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Saas resource group containing device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
-        /// <param name="diskName">VM disk name</param>
-        /// <param name="nicName">VM nic name</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
         /// <returns></returns>
-        public void DeleteVMResourcesRecursively(string deviceName, string resourceGroup, string vmName, string edgeResourceGroup, string diskName, string nicName)
+        public void DeleteVMAndItsDisksAndNics(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup)
         {
-            string response = GetAseResource(deviceName, resourceGroup);
-            dynamic resp = JObject.Parse(response);
-            String edgeSubId = resp.properties.edgeProfile.subscription.subscriptionId;
-            DeleteVM(resourceGroup, edgeResourceGroup, edgeSubId, vmName);
-            DeleteDisk(resourceGroup, edgeResourceGroup, edgeSubId, diskName);
-            DeleteNIC(resourceGroup, edgeResourceGroup, edgeSubId, nicName);
-            DeleteRG(deviceName, resourceGroup, vmName, edgeResourceGroup);
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            var vmDisks = GetDiskResourcesAttachedToVM(saasDeviceName, saasResourceGroup, vmName, vmResourceGroup);
+            var vmNics = GetNicResourcesAttachedToVM(saasDeviceName, saasResourceGroup, vmName, vmResourceGroup);
+
+            DeleteVM(saasResourceGroup, vmResourceGroup, linkedSubId, vmName);
+
+            foreach (var (diskName, diskResourceGroup) in vmDisks)
+            {
+                DeleteDisk(saasResourceGroup, diskResourceGroup, linkedSubId, diskName);
+            }
+            
+            foreach (var (nicName, nicResourceGroup) in vmNics)
+            {
+                DeleteNIC(saasResourceGroup, nicResourceGroup, linkedSubId, nicName);
+            }
+        }
+
+        /// <summary>
+        /// Get nics attached to a VM
+        /// </summary>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Saas resource group containing device</param>
+        /// <param name="vmName">VM name</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
+        /// <returns>List of pairs (nicname, nic resource group)</returns>
+        public List<(String, String)> GetNicResourcesAttachedToVM(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup)
+        {
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            var vmJsonStr = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
+            dynamic vmObj = JObject.Parse(vmJsonStr);
+
+            var vmNics = new List<(String, String)>();
+            JArray networkInterfaces = (JArray)vmObj.properties.networkProfile.networkInterfaces;
+            foreach (dynamic networkInterface in networkInterfaces)
+            {
+                vmNics.Add(GetLinkedResourceAndResourceGroup((String)networkInterface.id));
+            }
+            return vmNics;
+        }
+
+        /// <summary>
+        /// Get disks attached to a VM
+        /// </summary>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="saasResourceGroup">Linked resource group containing device</param>
+        /// <param name="vmName">VM name</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing VM</param>
+        /// <returns>List of pairs (diskname, disk resource group)</returns>
+        public List<(String, String)> GetDiskResourcesAttachedToVM(string saasDeviceName, string saasResourceGroup, string vmName, string vmResourceGroup)
+        {
+            String linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            var vmJsonStr = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
+            dynamic vmObj = JObject.Parse(vmJsonStr);
+
+            var vmDisks = new List<(String, String)>();
+            JArray dataDisks = (JArray)vmObj.properties.storageProfile.dataDisks;
+            foreach (dynamic dataDisk in dataDisks)
+            {
+                vmDisks.Add(GetLinkedResourceAndResourceGroup((String)dataDisk.managedDisk.id));
+            }
+
+            // Add os disk as well
+            vmDisks.Add(GetLinkedResourceAndResourceGroup((String)vmObj.properties.storageProfile.osDisk.managedDisk.id));
+
+            return vmDisks;
         }
 
         /// <summary>
         /// Delete VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="vmResourceGroup">Linked resource Group containing vm</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
         /// <returns></returns>
-        public void DeleteVM(string saasResourceGroup, string edgeResourceGroup, string edgeSubId, string vmName)
+        public void DeleteVM(string saasResourceGroup, string vmResourceGroup, string linkedSubId, string vmName)
         {
-            Console.WriteLine($"Deleting the vm {vmName}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}";
-            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, "2020-06-01-preview");
-            PollForStatus(responseDelete, "deleting VM");
+            Console.WriteLine($"Deleting vm {vmName}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{vmResourceGroup}/linkedProviders/Microsoft.Compute/virtualMachines/{vmName}";
+            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, SAAS_API_VERSION);
+            PollForStatus(responseDelete, $"Deleting VM {vmName}");
         }
 
         /// <summary>
         /// Delete disk
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="diskResourceGroup">Linked resource Group containing disk</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="diskName">Disk name</param>
         /// <returns></returns>
-        public void DeleteDisk(string saasResourceGroup, string edgeResourceGroup, string edgeSubId, string diskName)
+        public void DeleteDisk(string saasResourceGroup, string diskResourceGroup, string linkedSubId, string diskName)
         {
-            Console.WriteLine($"Deleting the disk {diskName}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}/linkedProviders/Microsoft.Compute/disks/{diskName}";
-            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, "2020-06-01-preview");
-            PollForStatus(responseDelete, "deleting Disk");
+            Console.WriteLine($"Deleting disk {diskName}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{diskResourceGroup}/linkedProviders/Microsoft.Compute/disks/{diskName}";
+            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, SAAS_API_VERSION);
+            PollForStatus(responseDelete, $"Deleting disk {diskName}");
         }
 
         /// <summary>
         /// Delete network interface
         /// </summary>
         /// <param name="resourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="nicResourceGroup">Linked resource Group containing nic</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="nicName">Nic name</param>
         /// <returns></returns>
-        public void DeleteNIC(string resourceGroup, string edgeResourceGroup, string edgeSubId, string nicName)
+        public void DeleteNIC(string resourceGroup, string nicResourceGroup, string linkedSubId, string nicName)
         {
-            Console.WriteLine($"Deleting the Network Interface {nicName}");
-            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{resourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourcegroups/{edgeResourceGroup}/linkedProviders/Microsoft.Network/networkInterfaces/{nicName}";
-            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, "2020-06-01-preview");
-            PollForStatus(responseDelete, "deleting Network Interface");
+            Console.WriteLine($"Deleting nic {nicName}");
+            string uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{resourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourcegroups/{nicResourceGroup}/linkedProviders/Microsoft.Network/networkInterfaces/{nicName}";
+            IRestResponse responseDelete = MakeRestCall(uri, Method.DELETE, SAAS_API_VERSION);
+            PollForStatus(responseDelete, $"Deleting nic {nicName}");
         }
 
         /// <summary>
         /// Create a managed disk
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containing disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containing disk</param>
         /// <param name="diskSizeGB">Disk size in GB</param>
         /// <returns></returns>
-        public void CreateManagedDisk(string saasResourceGroup, string edgeSubId, string diskName, string diskResourceGroup, string diskSizeGB)
+        public void CreateManagedDisk(string saasResourceGroup, string linkedSubId, string diskName, string diskResourceGroup, string diskSizeGB)
         {
-            Console.WriteLine($"Creating a managed disk {diskName} of size {diskSizeGB} GB under edge resource group {diskResourceGroup}. SaasResourceGroup: {saasResourceGroup}, EdgeSubId: {edgeSubId}");
-            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourceGroups/{diskResourceGroup}/linkedProviders/Microsoft.Compute/disks/{diskName}";
+            Console.WriteLine($"Creating a managed disk {diskName} of size {diskSizeGB} GB under linked resource group {diskResourceGroup}. SaasResourceGroup: {saasResourceGroup}, linkedSubId: {linkedSubId}");
+            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{diskResourceGroup}/linkedProviders/Microsoft.Compute/disks/{diskName}";
             var body = new
             {
                 location = "dbelocal",
@@ -427,32 +462,32 @@ namespace cloudscript
                 }
             };
 
-            IRestResponse response = MakeRestCall(uri, Method.PUT, "2020-06-01-preview", body: body);
+            IRestResponse response = MakeRestCall(uri, Method.PUT, SAAS_API_VERSION, body: body);
             PollForStatus(response, $"Create disk {diskName}");
-            Console.WriteLine($"Created a managed disk {diskName} of size {diskSizeGB} GB under edge resource group {diskResourceGroup}");
+            Console.WriteLine($"Created a managed disk {diskName} of size {diskSizeGB} GB under linked resource group {diskResourceGroup}");
         }
 
         /// <summary>
         /// Create a nic
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="vnetName">Virtual network where nic should be created</param>
-        /// <param name="vnetResourceGroup">Resource group containing virtual network</param>
+        /// <param name="vnetResourceGroup">Linked resource group containing virtual network</param>
         /// <param name="ip">IP to be allocated to the nic</param>
         /// <returns></returns>
-        public void CreateNic(string saasResourceGroup, string edgeSubId, string nicName, string nicResourceGroup, string vnetName, string vnetResourceGroup, string ip = "")
+        public void CreateNic(string saasResourceGroup, string linkedSubId, string nicName, string nicResourceGroup, string vnetName, string vnetResourceGroup, string ip = "")
         {
             string ipConfig = String.IsNullOrEmpty(ip) ? "Dynamic" : "Static";
-            Console.WriteLine($"Creating a nic {nicName} under edge resource group {nicResourceGroup} with {ipConfig} ip configuration. SaasResourceGroup: {saasResourceGroup}, EdgeSubId: {edgeSubId}. IP: {ip}");
+            Console.WriteLine($"Creating a nic {nicName} under linked resource group {nicResourceGroup} with {ipConfig} ip configuration. SaasResourceGroup: {saasResourceGroup}, linkedSubId: {linkedSubId}. IP: {ip}");
 
             //Get the subnet from vnet. Current vnet has only one subnet.
-            String vnetJson = GetEdgeResource("Microsoft.Network/virtualNetworks", vnetName, vnetResourceGroup, saasResourceGroup, edgeSubId);
+            String vnetJson = GetLinkedResource("Microsoft.Network/virtualNetworks", vnetName, vnetResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vnetObj = JObject.Parse(vnetJson);
 
-            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourceGroups/{nicResourceGroup}/linkedProviders/Microsoft.Network/networkInterfaces/{nicName}";
+            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{nicResourceGroup}/linkedProviders/Microsoft.Network/networkInterfaces/{nicName}";
 
             // Create payload to create nic
             dynamic payload = new JObject();
@@ -471,32 +506,32 @@ namespace cloudscript
             }
             payload.properties.ipConfigurations.Add((JObject)ipconfiguration);
 
-            IRestResponse response = MakeRestCall(uri, Method.PUT, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall(uri, Method.PUT, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Create nic {nicName}");
-            Console.WriteLine($"Created nic {nicName} under edge resource group {nicResourceGroup} with {ipConfig} ip configuration");
+            Console.WriteLine($"Created nic {nicName} under linked resource group {nicResourceGroup} with {ipConfig} ip configuration");
         }
 
         /// <summary>
         /// Attach the specified disk to the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containing disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containing disk</param>
         /// <param name="lunId">Lun id with which disk should attach to VM</param>
         /// <returns></returns>
-        public void AttachDisk(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup, int lunId = 0)
+        public void AttachDisk(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup, int lunId = 0)
         {
-            Console.WriteLine($"Attaching disk {diskName} under edge resource group {diskResourceGroup} to vm {vmName} under edge resource group {vmResourceGroup} with lunId {lunId}");
+            Console.WriteLine($"Attaching disk {diskName} under linked resource group {diskResourceGroup} to vm {vmName} under linked resource group {vmResourceGroup} with lunId {lunId}");
 
             // Get the VM object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Get the disk object
-            String diskJson = GetEdgeResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, edgeSubId);
+            String diskJson = GetLinkedResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, linkedSubId);
             dynamic diskObj = JObject.Parse(diskJson);
 
             // Create disk object structure
@@ -508,7 +543,7 @@ namespace cloudscript
             newDisk.diskSizeGB = diskObj.properties.diskSizeGB;
             newDisk.managedDisk = new JObject();
             newDisk.managedDisk.storageAccountType = diskObj.sku.name;
-            newDisk.managedDisk.id = GetLocalResourceId((String)diskObj.id);
+            newDisk.managedDisk.id = GetLinkedResourceId((String)diskObj.id);
 
             // Add the disk to the list of existing disks
             JArray dataDisks = (JArray)vmObj.properties.storageProfile.dataDisks;
@@ -521,27 +556,27 @@ namespace cloudscript
             payload.properties.storageProfile.dataDisks = dataDisks;
 
             // Make request to attach the disk
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Attach disk {diskName} to VM {vmName}");
-            Console.WriteLine($"Attached the disk {diskName} in edge resource group {diskResourceGroup} to the VM {vmName} in edge resource group {vmResourceGroup}");
+            Console.WriteLine($"Attached the disk {diskName} in linked resource group {diskResourceGroup} to the VM {vmName} in linked resource group {vmResourceGroup}");
         }
 
         /// <summary>
         /// Detach the specified disk from the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containign disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containign disk</param>
         /// <returns></returns>
-        public void DetachDisk(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup)
+        public void DetachDisk(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup)
         {
-            Console.WriteLine($"Detaching disk {diskName} under edge resource group {diskResourceGroup} from vm {vmName} under edge resource group {vmResourceGroup}");
+            Console.WriteLine($"Detaching disk {diskName} under linked resource group {diskResourceGroup} from vm {vmName} under linked resource group {vmResourceGroup}");
 
             // Get the VM object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Remove the disk from VM object
@@ -558,7 +593,7 @@ namespace cloudscript
             }
             if (!diskRemoved)
             {
-                Console.WriteLine($"Disk {diskName} in edge resource group {diskResourceGroup} is not part of VM disks currently. Current VM object: {vmObj.ToString()}");
+                Console.WriteLine($"Disk {diskName} in linked resource group {diskResourceGroup} is not part of VM disks currently. Current VM object: {vmObj.ToString()}");
                 return;
             }
 
@@ -569,26 +604,26 @@ namespace cloudscript
             payload.properties.storageProfile.dataDisks = dataDisks;
 
             // Make request to attach the disk
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Detach disk {diskName} from VM {vmName}");
-            Console.WriteLine($"Detached the disk {diskName} in edge resource group {diskResourceGroup} to the VM {vmName} in edge resource group {vmResourceGroup}");
+            Console.WriteLine($"Detached the disk {diskName} in linked resource group {diskResourceGroup} to the VM {vmName} in linked resource group {vmResourceGroup}");
         }
 
         /// <summary>
         /// Resize a disk
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containign disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containign disk</param>
         /// <param name="newSizeInGb">Disk size in GB</param>
         /// <returns></returns>
-        public void ResizeDisk(string saasResourceGroup, string edgeSubId, string diskName, string diskResourceGroup, int newSizeInGb)
+        public void ResizeDisk(string saasResourceGroup, string linkedSubId, string diskName, string diskResourceGroup, int newSizeInGb)
         {
-            Console.WriteLine($"Resizing the disk {diskName} in edge resource group {diskResourceGroup} to {newSizeInGb} GB");
+            Console.WriteLine($"Resizing the disk {diskName} in linked resource group {diskResourceGroup} to {newSizeInGb} GB");
 
             // Get the disk object
-            String diskJson = GetEdgeResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, edgeSubId);
+            String diskJson = GetLinkedResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, linkedSubId);
             dynamic diskObj = JObject.Parse(diskJson);
 
             // Update the disk object with new size
@@ -606,26 +641,26 @@ namespace cloudscript
             diskObj.properties.diskSizeGB = newSizeInGb;
 
             // Resize the disk
-            IRestResponse response = MakeRestCall((String)diskObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)diskObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Resize disk {diskName}");
-            Console.WriteLine($"Resized disk {diskName} in edge resource group {diskResourceGroup} to size {newSizeInGb} GB");
+            Console.WriteLine($"Resized disk {diskName} in linked resource group {diskResourceGroup} to size {newSizeInGb} GB");
         }
 
         /// <summary>
         /// Resize a VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="newVMSize">VM size e.g. Standard_D1_V1</param>
         /// <returns></returns>
-        public void ResizeVM(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string newVMSize)
+        public void ResizeVM(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string newVMSize)
         {
-            Console.WriteLine($"Resizing the VM {vmName} in edge resource group {vmResourceGroup} to {newVMSize}");
+            Console.WriteLine($"Resizing the VM {vmName} in linked resource group {vmResourceGroup} to {newVMSize}");
 
             // Get the vm object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Update the VM object with new size
@@ -643,30 +678,30 @@ namespace cloudscript
             payload.properties.hardwareProfile.vmSize = newVMSize;
 
             // Resize VM
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Resize vm {vmName}");
-            Console.WriteLine($"Resized VM {vmName} in edge resource group {vmResourceGroup} to size {newVMSize}");
+            Console.WriteLine($"Resized VM {vmName} in linked resource group {vmResourceGroup} to size {newVMSize}");
         }
 
         /// <summary>
         /// Check if the specified disk is attahced to the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containign disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containign disk</param>
         /// <param name="sleepTimeSec"> Sleep time in seconds before checking</param>
         /// <returns>bool</returns>
-        public bool IsDiskAttachedToVM(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup, int sleepTimeSec = 0)
+        public bool IsDiskAttachedToVM(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string diskName, string diskResourceGroup, int sleepTimeSec = 0)
         {
 
             Console.WriteLine($"Check if disk {diskName} in resource group {diskResourceGroup} is attached to VM {vmName} in resource group {vmResourceGroup}. Sleeping for {sleepTimeSec} seconds before checking");
             System.Threading.Thread.Sleep(sleepTimeSec * 1000);
 
             // Get the vm object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Query data disks of VM
@@ -686,19 +721,19 @@ namespace cloudscript
         /// Check if the specified disk is of specified size
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="diskName">Disk name</param>
-        /// <param name="diskResourceGroup">Resource group containign disk</param>
+        /// <param name="diskResourceGroup">Linked resource group containign disk</param>
         /// <param name="expectedDiskSizeGb">Disk size in GB</param>
         /// <param name="sleepTimeSec">Sleep time in seconds before checking</param>
         /// <returns>bool</returns>
-        public bool IsDiskSizeExpected(string saasResourceGroup, string edgeSubId, string diskName, string diskResourceGroup, int expectedDiskSizeGb, int sleepTimeSec = 0)
+        public bool IsDiskSizeExpected(string saasResourceGroup, string linkedSubId, string diskName, string diskResourceGroup, int expectedDiskSizeGb, int sleepTimeSec = 0)
         {
             Console.WriteLine($"Verifying the disk {diskName} in resource group {diskResourceGroup} is of size {expectedDiskSizeGb} GB. Sleeping for {sleepTimeSec} seconds before checking");
             System.Threading.Thread.Sleep(sleepTimeSec * 1000);
 
             // Get the disk object
-            String diskJson = GetEdgeResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, edgeSubId);
+            String diskJson = GetLinkedResource("Microsoft.Compute/disks", diskName, diskResourceGroup, saasResourceGroup, linkedSubId);
             dynamic diskObj = JObject.Parse(diskJson);
 
             // Check the disk size
@@ -715,19 +750,19 @@ namespace cloudscript
         /// Check if the specified VM is of specified size
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="expectedVMsize">Expected VM size</param>
         /// <param name="sleepTimeSec">Sleep time in seconds before checking</param>
         /// <returns>bool</returns>
-        public bool IsVMSizeExpected(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string expectedVMsize, int sleepTimeSec = 0)
+        public bool IsVMSizeExpected(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string expectedVMsize, int sleepTimeSec = 0)
         {
             Console.WriteLine($"Verifying if the VM {vmName} in resource group {vmResourceGroup} is of size {expectedVMsize}. Sleeping for {sleepTimeSec} seconds before checking");
             System.Threading.Thread.Sleep(sleepTimeSec * 1000);
 
             // Get the vm object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Check the VM size
@@ -743,28 +778,28 @@ namespace cloudscript
         /// Attach the specified nic to the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="primary">Whether nic should be attached as primary or not</param>
         /// <returns></returns>
-        public void AttachNic(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, bool primary = false)
+        public void AttachNic(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, bool primary = false)
         {
-            Console.WriteLine($"Attaching nic {nicName} under edge resource group {nicResourceGroup} to vm {vmName} under edge resource group {vmResourceGroup} with primary set to {primary}");
+            Console.WriteLine($"Attaching nic {nicName} under linked resource group {nicResourceGroup} to vm {vmName} under linked resource group {vmResourceGroup} with primary set to {primary}");
 
             // Get the VM object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Get the nic object
-            String nicJson = GetEdgeResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, edgeSubId);
+            String nicJson = GetLinkedResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, linkedSubId);
             dynamic nicObj = JObject.Parse(nicJson);
 
             // Create nic object structure
             dynamic newNic = new JObject();
-            newNic.id = GetLocalResourceId((String)nicObj.id);
+            newNic.id = GetLinkedResourceId((String)nicObj.id);
             newNic.properties = new JObject();
             newNic.properties.primary = primary;
 
@@ -798,27 +833,27 @@ namespace cloudscript
             payload.properties.networkProfile.networkInterfaces = networkInterfaces;
 
             // Make request to attach the nic
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Attach nic {nicName} to VM {vmName}");
-            Console.WriteLine($"Attached the nic {nicName} in edge resource group {nicResourceGroup} to the VM {vmName} in edge resource group {vmResourceGroup} with primary set to {primary}");
+            Console.WriteLine($"Attached the nic {nicName} in linked resource group {nicResourceGroup} to the VM {vmName} in linked resource group {vmResourceGroup} with primary set to {primary}");
         }
 
         /// <summary>
         /// Set the specified nic to the specified VM as primary nic
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <returns></returns>
-        public void SetNicAsPrimary(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup)
+        public void SetNicAsPrimary(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup)
         {
-            Console.WriteLine($"Setting nic {nicName} under edge resource group {nicResourceGroup} to vm {vmName} under edge resource group {vmResourceGroup} as primary");
+            Console.WriteLine($"Setting nic {nicName} under linked resource group {nicResourceGroup} to vm {vmName} under linked resource group {vmResourceGroup} as primary");
 
             // Get the VM object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // If only one nic present, skip setting primary as its not a valid scenario.
@@ -856,27 +891,27 @@ namespace cloudscript
             payload.properties.networkProfile.networkInterfaces = networkInterfaces;
 
             // Make request to attach the nic
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Set nic {nicName} to VM {vmName} as primary");
-            Console.WriteLine($"Set the nic {nicName} in edge resource group {nicResourceGroup} to the VM {vmName} in edge resource group {vmResourceGroup} as primary");
+            Console.WriteLine($"Set the nic {nicName} in linked resource group {nicResourceGroup} to the VM {vmName} in linked resource group {vmResourceGroup} as primary");
         }
 
         /// <summary>
         /// Detach the specified nic from the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <returns></returns>
-        public void DetachNic(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup)
+        public void DetachNic(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup)
         {
-            Console.WriteLine($"Detaching nic {nicName} under edge resource group {nicResourceGroup} from vm {vmName} under edge resource group {vmResourceGroup}");
+            Console.WriteLine($"Detaching nic {nicName} under linked resource group {nicResourceGroup} from vm {vmName} under linked resource group {vmResourceGroup}");
 
             // Get the VM object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Remove the nic from VM object
@@ -901,7 +936,7 @@ namespace cloudscript
             }
             if (!nicRemoved)
             {
-                Console.WriteLine($"Nic {nicName} in edge resource group {nicResourceGroup} is not part of VM nics currently. Current VM object: {vmObj.ToString()}");
+                Console.WriteLine($"Nic {nicName} in linked resource group {nicResourceGroup} is not part of VM nics currently. Current VM object: {vmObj.ToString()}");
                 return;
             }
 
@@ -912,30 +947,30 @@ namespace cloudscript
             payload.properties.networkProfile.networkInterfaces = networkInterfaces;
 
             // Make request to attach the nic
-            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)vmObj.id, Method.PATCH, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Detach nic {nicName} from VM {vmName}");
-            Console.WriteLine($"Detached the nic {nicName} in edge resource group {nicResourceGroup} to the VM {vmName} in edge resource group {vmResourceGroup}");
+            Console.WriteLine($"Detached the nic {nicName} in linked resource group {nicResourceGroup} to the VM {vmName} in linked resource group {vmResourceGroup}");
         }
 
         /// <summary>
         /// Check if the specified nic is attahced to the specified VM
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="sleepTimeSec">Sleep time in seconds before checking</param>
         /// <returns>True if nic is attached to VM</returns>
-        public bool IsNicAttachedToVM(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, int sleepTimeSec = 0)
+        public bool IsNicAttachedToVM(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, int sleepTimeSec = 0)
         {
 
             Console.WriteLine($"Check if nic {nicName} in resource group {nicResourceGroup} is attached to VM {vmName} in resource group {vmResourceGroup}. Sleeping for {sleepTimeSec} seconds before checking");
             System.Threading.Thread.Sleep(sleepTimeSec * 1000);
 
             // Get the vm object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Query nics of VM
@@ -955,18 +990,18 @@ namespace cloudscript
         /// Toggle a nic from static to dynamic ip configuration and vice versa
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="staticIp">Static IP address</param>
         /// <returns></returns>
-        public void SetNicIp(string saasResourceGroup, string edgeSubId, string nicName, string nicResourceGroup, string staticIp = "")
+        public void SetNicIp(string saasResourceGroup, string linkedSubId, string nicName, string nicResourceGroup, string staticIp = "")
         {
             string ipConfig = String.IsNullOrEmpty(staticIp) ? "Dynamic" : "Static";
-            Console.WriteLine($"Setting the ip configuration of nic {nicName} in edge resource group {nicResourceGroup} to {ipConfig}. IP: {staticIp}");
+            Console.WriteLine($"Setting the ip configuration of nic {nicName} in linked resource group {nicResourceGroup} to {ipConfig}. IP: {staticIp}");
 
             // Get the nic object
-            String nicJson = GetEdgeResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, edgeSubId);
+            String nicJson = GetLinkedResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, linkedSubId);
             dynamic nicObj = JObject.Parse(nicJson);
 
             // Update the nic object with new configuration
@@ -998,35 +1033,35 @@ namespace cloudscript
             payload.properties.ipConfigurations.Add((JObject)ipconfiguration);
 
             // Resize the disk
-            IRestResponse response = MakeRestCall((String)nicObj.id, Method.PUT, "2020-06-01-preview", body: (payload.ToString()));
+            IRestResponse response = MakeRestCall((String)nicObj.id, Method.PUT, SAAS_API_VERSION, body: (payload.ToString()));
             PollForStatus(response, $"Set ip config of nic {nicName} to {ipConfig}. IP: {staticIp}");
-            Console.WriteLine($"Set the ip config of nic {nicName} in edge resource group {nicResourceGroup} to {ipConfig} successfully");
+            Console.WriteLine($"Set the ip config of nic {nicName} in linked resource group {nicResourceGroup} to {ipConfig} successfully");
         }
 
         /// <summary>
         /// Check if specifid nic has specified ip
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="ip">IP address for nic</param>
         /// <param name="sleepTimeInSec">Sleep time in seconds before checking</param>
         /// <returns>True if the specified IP is assigned to the nic</returns>
-        public bool HasNicIp(string saasResourceGroup, string edgeSubId, string nicName, string nicResourceGroup, string ip, int sleepTimeInSec = 0)
+        public bool HasNicIp(string saasResourceGroup, string linkedSubId, string nicName, string nicResourceGroup, string ip, int sleepTimeInSec = 0)
         {
-            Console.WriteLine($"Checking if nic {nicName} in edge resource group {nicResourceGroup} has ip set to {ip}. Sleeping for {sleepTimeInSec} seconds before checking");
+            Console.WriteLine($"Checking if nic {nicName} in linked resource group {nicResourceGroup} has ip set to {ip}. Sleeping for {sleepTimeInSec} seconds before checking");
             Thread.Sleep(sleepTimeInSec * 1000);
 
             // Get the nic object
-            String nicJson = GetEdgeResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, edgeSubId);
+            String nicJson = GetLinkedResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, linkedSubId);
             dynamic nicObj = JObject.Parse(nicJson);
 
             if (nicObj.properties.ipConfigurations[0].properties.privateIPAddress == ip)
             {
                 return true;
             }
-            Console.WriteLine($"Nic {nicName} in edge resource group {nicResourceGroup} has ip set to {nicObj.properties.ipConfigurations[0].properties.privateIPAddress}");
+            Console.WriteLine($"Nic {nicName} in linked resource group {nicResourceGroup} has ip set to {nicObj.properties.ipConfigurations[0].properties.privateIPAddress}");
             return false;
         }
 
@@ -1034,25 +1069,25 @@ namespace cloudscript
         /// Check if specifid nic has static ip configuration
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="sleepTimeInSec">Sleep time in seconds before checking</param>
         /// <returns>True if Nic has static ip configuration</returns>
-        public bool IsNicStatic(string saasResourceGroup, string edgeSubId, string nicName, string nicResourceGroup, int sleepTimeInSec = 0)
+        public bool IsNicStatic(string saasResourceGroup, string linkedSubId, string nicName, string nicResourceGroup, int sleepTimeInSec = 0)
         {
-            Console.WriteLine($"Checking if nic {nicName} in edge resource group {nicResourceGroup} has static ip configuration. Sleeping for {sleepTimeInSec} seconds before checking");
+            Console.WriteLine($"Checking if nic {nicName} in linked resource group {nicResourceGroup} has static ip configuration. Sleeping for {sleepTimeInSec} seconds before checking");
             Thread.Sleep(sleepTimeInSec * 1000);
 
             // Get the nic object
-            String nicJson = GetEdgeResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, edgeSubId);
+            String nicJson = GetLinkedResource("Microsoft.Network/networkInterfaces", nicName, nicResourceGroup, saasResourceGroup, linkedSubId);
             dynamic nicObj = JObject.Parse(nicJson);
 
             if (((String)nicObj.properties.ipConfigurations[0].properties.privateIPAllocationMethod).Equals("Static", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
-            Console.WriteLine($"Nic {nicName} in edge resource group {nicResourceGroup} has ip set to {nicObj.properties.ipConfigurations[0].properties.privateIPAllocationMethod}");
+            Console.WriteLine($"Nic {nicName} in linked resource group {nicResourceGroup} has ip set to {nicObj.properties.ipConfigurations[0].properties.privateIPAllocationMethod}");
             return false;
         }
 
@@ -1060,21 +1095,21 @@ namespace cloudscript
         /// Check if the specified nic is attahced to the specified VM as a primary nic
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
         /// <param name="vmName">VM name</param>
-        /// <param name="vmResourceGroup">Resource group containing VM</param>
+        /// <param name="vmResourceGroup">Linked resource group containing VM</param>
         /// <param name="nicName">Nic name</param>
-        /// <param name="nicResourceGroup">Resource group containing nic</param>
+        /// <param name="nicResourceGroup">Linked resource group containing nic</param>
         /// <param name="sleepTimeSec">Sleep time in seconds before checking</param>
         /// <returns>True if Nic is a primary nic</returns>
-        public bool IsNicPrimary(string saasResourceGroup, string edgeSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, int sleepTimeSec = 0)
+        public bool IsNicPrimary(string saasResourceGroup, string linkedSubId, string vmName, string vmResourceGroup, string nicName, string nicResourceGroup, int sleepTimeSec = 0)
         {
 
             Console.WriteLine($"Check if nic {nicName} in resource group {nicResourceGroup} is attached to VM {vmName} in resource group {vmResourceGroup} as primary. Sleeping for {sleepTimeSec} seconds before checking");
             System.Threading.Thread.Sleep(sleepTimeSec * 1000);
 
             // Get the vm object
-            String vmJson = GetEdgeResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, edgeSubId);
+            String vmJson = GetLinkedResource("Microsoft.Compute/virtualMachines", vmName, vmResourceGroup, saasResourceGroup, linkedSubId);
             dynamic vmObj = JObject.Parse(vmJson);
 
             // Query nics of VM
@@ -1093,46 +1128,61 @@ namespace cloudscript
         }
 
         /// <summary>
-        /// Get all the resources inside an edge resource group
+        /// Get all the resources inside an linked resource group
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge Subscription Id of ASE device</param>
-        /// <param name="edgeResourceGroup">Resource Group on device</param>
-        /// <returns>Returns all resources in edge resource group</returns>
-        public string GetAllResourcesInLinkedResourceGroup(string saasResourceGroup, string edgeSubId, string edgeResourceGroup)
+        /// <param name="linkedSubId">LinkedSubscriptionId of ASE device</param>
+        /// <param name="linkedResourceGroup">Resource Group on device</param>
+        /// <returns>Returns all resources in linked resource group</returns>
+        public string GetAllResourcesInLinkedResourceGroup(string saasResourceGroup, string linkedSubId, string linkedResourceGroup)
         {
-            Console.WriteLine($"Getting all resources inside edge resource group {edgeResourceGroup}. SaasResourceGroup: {saasResourceGroup}, EdgeSubId: {edgeSubId}");
+            Console.WriteLine($"Getting all resources inside linked resource group {linkedResourceGroup}. SaasResourceGroup: {saasResourceGroup}, linkedSubId: {linkedSubId}");
 
-            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{edgeSubId}/linkedResourceGroups/{edgeResourceGroup}/resources";
+            String uri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{linkedResourceGroup}/resources";
 
-            IRestResponse response = MakeRestCallWithRetry(uri, "2020-06-01-preview");
+            IRestResponse response = MakeRestCallWithRetry(uri, SAAS_API_VERSION);
             return response.Content;
         }
 
         /// <summary>
-        /// Convert a remote resource id to a local resource id
+        /// Convert a saas resource id to a linked resource id
         /// </summary>
-        /// <param name="remoteResourceId">Resource Id of a resource on ASE device when seen from cloud</param>
-        /// <returns>Local resource Id i.e. Resource Id of a resource on ASE device when seen from device itself</returns>
-        public String GetLocalResourceId(string remoteResourceId)
+        /// <param name="saasResourceId">Resource Id of a resource on ASE device when seen from cloud</param>
+        /// <returns>Linked resource Id i.e. Resource Id of a resource on ASE device when seen from device itself</returns>
+        public String GetLinkedResourceId(string saasResourceId)
         {
-            Console.WriteLine($"Remote resource Id: {remoteResourceId}");
-            string localLinkedResourceId = remoteResourceId.Split(new String[] { "Microsoft.AzureStack" }, StringSplitOptions.RemoveEmptyEntries)[1];
+            Console.WriteLine($"Saas resource Id: {saasResourceId}");
+            string localLinkedResourceId = saasResourceId.Split(new String[] { "Microsoft.AzureStack" }, StringSplitOptions.RemoveEmptyEntries)[1];
             string localResourceId = localLinkedResourceId.Replace("linked", "");
-            Console.WriteLine($"Local resource Id: {localResourceId}");
+            Console.WriteLine($"Linked resource Id: {localResourceId}");
             return localResourceId;
+        }
+
+        /// <summary>
+        /// Get linked resource name and its resource group from linked resource id
+        /// </summary>
+        /// <param name="linkedResourceId">Linked resource id</param>
+        /// <returns>Returns a pair (linked resource name, linked resource group contining the linked resource)</returns>
+        public (String, String) GetLinkedResourceAndResourceGroup(string linkedResourceId)
+        {
+            Match m = Regex.Match(linkedResourceId, "resourceGroups/([^/]*)/.*/([^/]*)$", RegexOptions.IgnoreCase);
+            string resourceName = m.Groups[2].Value;
+            string resourceGroup = m.Groups[1].Value;
+            if (String.IsNullOrEmpty(resourceName) || String.IsNullOrEmpty(resourceGroup))
+                throw new Exception($"Resource name or resource group not found for linked resource id: {linkedResourceId}");
+            return (resourceName, resourceGroup);
         }
 
         /// <summary>
         /// Get the default virtual network on ASE device
         /// </summary>
-        /// <param name="deviceName">ASE Device name</param>
+        /// <param name="saasDeviceName">ASE Device name</param>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <returns>returns a tuple (Virtual network name, Virtual network resource group, Subnet name)</returns>
-        public (String, String, String) GetDefaultVirtualNetwork(string deviceName, string saasResourceGroup)
+        public (String, String, String) GetDefaultVirtualNetwork(string saasDeviceName, string saasResourceGroup)
         {
-            var edgeSubId = GetEdgeSubscriptionId(deviceName, saasResourceGroup);
-            var vnets = GetAllResourcesByTypeOnDevice(saasResourceGroup, edgeSubId, "Microsoft.Network/virtualNetworks");
+            var linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            var vnets = GetAllLinkedResourcesByType(saasResourceGroup, linkedSubId, "Microsoft.Network/virtualNetworks");
             Console.WriteLine(vnets);
             dynamic vnetObjs = JObject.Parse(vnets);
             var vnetName = vnetObjs.value[0].name;
@@ -1161,17 +1211,17 @@ namespace cloudscript
         /// Poll for both the deployments: deployment triggered from Saas and depolyment triggered locally
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="edgeSubId">Edge subscription id</param>
+        /// <param name="linkedSubId">LinkedSubscriptionId</param>
         /// <param name="deploymentUri"> Deployment uri triggered from Saas </param>
         /// <returns>None</returns>
-        private void PollForDeployments(string saasResourceGroup, string edgeSubId, string deploymentUri)
+        private void PollForDeployments(string saasResourceGroup, string linkedSubId, string deploymentUri)
         {
             // We put a try catch here because we do not want the caller to fail due to failures in polling.
             // This is just for info purpose
             try
             {
                 // Check main deployment status
-                IRestResponse response = MakeRestCallWithRetry(deploymentUri, "2020-06-01-preview");
+                IRestResponse response = MakeRestCallWithRetry(deploymentUri, SAAS_API_VERSION);
                 dynamic resp = JObject.Parse(response.Content);
                 string deploymentName = resp.Name;
                 string status = resp.properties.provisioningState;
@@ -1182,7 +1232,7 @@ namespace cloudscript
                 string innerDeploymentResourceType = resp.properties.dependencies[0].resourceType;
                 // We should have a better mechanism of figuring out resource group for deployment. May be parse the id field in future.
                 string innerDeploymentResourceGroup = resp.properties.dependencies[0].dependsOn[0].resourceName;
-                string innerDeploymentOutput = GetEdgeResource(innerDeploymentResourceType, innerDeploymentName, innerDeploymentResourceGroup, saasResourceGroup, edgeSubId);
+                string innerDeploymentOutput = GetLinkedResource(innerDeploymentResourceType, innerDeploymentName, innerDeploymentResourceGroup, saasResourceGroup, linkedSubId);
                 Console.WriteLine($"Deployment {innerDeploymentName} content: {innerDeploymentOutput}");
             }
             catch (Exception exc)
@@ -1217,19 +1267,19 @@ namespace cloudscript
         /// </summary>
         /// <param name="uri">Request Uri to invoke</param>
         /// <param name="method">Rest method to invoke</param>
-        /// <param name="apiVersion">Saas api version</param>
-        /// <param name="edgeApiVersion">Resource specific api version</param>
+        /// <param name="saasApiVersion">Saas api version</param>
+        /// <param name="linkedApiVersion">Linked resource specific api version</param>
         /// <param name="body">Request body</param>
         /// <param name="doNotThrowException">does not throw exception when set to true and fails silently</param>
         /// <returns>Rest response</returns>
-        private IRestResponse MakeRestCall(string uri, Method method, string apiVersion = "", string edgeApiVersion = "", object body = null, bool doNotThrowException = false)
+        private IRestResponse MakeRestCall(string uri, Method method, string saasApiVersion = "", string linkedApiVersion = "", object body = null, bool doNotThrowException = false)
         {
             Console.WriteLine($"MakeRestCall Uri: {uri}, Method: {method}");
             IRestRequest request = new RestRequest(uri, method);
-            if (!String.IsNullOrEmpty(apiVersion))
-                request.AddQueryParameter("api-version", apiVersion);
-            if (!String.IsNullOrEmpty(edgeApiVersion))
-                request.AddQueryParameter("linked-api-version", edgeApiVersion);
+            if (!String.IsNullOrEmpty(saasApiVersion))
+                request.AddQueryParameter("api-version", saasApiVersion);
+            if (!String.IsNullOrEmpty(linkedApiVersion))
+                request.AddQueryParameter("linked-api-version", linkedApiVersion);
             request.AddHeader("Authorization", "Bearer " + Token);
             if (method != Method.GET)
             {
@@ -1244,16 +1294,16 @@ namespace cloudscript
         /// Make a rest call with retries to avoid intermittent failures. e.g. BadGateway etc.
         /// </summary>
         /// <param name="uri">Request Uri to invoke</param>
-        /// <param name="apiVersion">Saas api version</param>
-        /// <param name="edgeApiVersion">Resource specific api version</param>
+        /// <param name="saasApiVersion">Saas api version</param>
+        /// <param name="linkedApiVersion">Resource specific api version</param>
         /// <param name="maxRetries">Max retries</param>
         /// <param name="retryFrequency">Time gap in seconds for rest call retires</param>
         /// <returns>Rest response</returns>
-        private IRestResponse MakeRestCallWithRetry(string uri, string apiVersion = "", string edgeApiVersion = "", int maxRetries = 8, int retryFrequency = 15)
+        private IRestResponse MakeRestCallWithRetry(string uri, string saasApiVersion = "", string linkedApiVersion = "", int maxRetries = 8, int retryFrequency = 15)
         {
             for (int i = 0; i < maxRetries; i++)
             {
-                IRestResponse response = MakeRestCall(uri, Method.GET, apiVersion: apiVersion, edgeApiVersion: edgeApiVersion, doNotThrowException: true);
+                IRestResponse response = MakeRestCall(uri, Method.GET, saasApiVersion: saasApiVersion, linkedApiVersion: linkedApiVersion, doNotThrowException: true);
                 if (response.IsSuccessful)
                     return response;
                 int responseCode = (int)response.StatusCode;

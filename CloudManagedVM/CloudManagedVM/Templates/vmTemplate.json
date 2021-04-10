@@ -83,9 +83,6 @@
                         },
                         "privateIPAddress": {
                           "value": ""
-                        },
-                        "customData": {
-                          "value": "ls"
                         }
                       },
                         "template":{
@@ -165,19 +162,12 @@
                               "metadata": {
                                 "description": "Private ip address"
                               }
-                            },
-                            "customData": {
-                              "type": "secureString",
-                              "metadata": {
-                                "description": "Custom Data to be executed on the VM"
-                              }
                             }
                           },
                           "variables": {
                               "location": "dbelocal",
                               "vnetID": "[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
-                              "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
-                              "customDataBase64": "[base64(parameters('customData'))]"
+                              "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
                           },
                             "resources":[
                                 {
@@ -215,8 +205,7 @@
                                       "osProfile": {
                                         "computerName": "[parameters('vmName')]",
                                         "adminUsername": "[parameters('adminUsername')]",
-                                        "adminPassword": "[parameters('Password')]",
-                                        "customData": "[variables('customDataBase64')]"
+                                        "adminPassword": "[parameters('Password')]"
                                       },
                                         "storageProfile":{
                                             "imageReference":{
