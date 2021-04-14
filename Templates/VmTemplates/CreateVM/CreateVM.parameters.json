@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "vmName": {
+          "value": "DebugVM1"
+      },
+      "adminUsername": {
+          "value": "Administrator"
+      },
+      "Password": {
+          "value": "Password1"
+      },
+    "imageName": {
+      "value": "Linuximage1"
+    },
+    "vmSize": {
+      "value": "Standard_D2_v2"
+    },
+    "vnetName": {
+      "value": "ASEVNET"
+    },
+    "subnetName": {
+      "value": "ASEVNETsubNet"
+    },
+    "vnetRG": {
+      "value": "aserg"
+    },
+    "nicName": {
+      "value": "nicdebug"
+    },
+    "privateIPAddress": {
+      "value": ""
+    },
+    "IPConfigName": {
+      "value": "ipconfigdebug"
+    }
+  }
+}
