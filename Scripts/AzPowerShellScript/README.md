@@ -1,7 +1,7 @@
 ﻿---
-page_type: Code Sample
+page_type: sample
 languages:
-- Azure Power Shell
+- azurepowershell
 products:
 - azure-stack
 - azure-virtual-machines
@@ -10,7 +10,7 @@ products:
 
 # Deploying VMs using the Az cmdlets
 
-This script creates a VM on your Azure Stack Edge device using Az cmdlets via Powershell scripting. 
+This script creates a VM on your Azure Stack Edge device using Az cmdlets via Powershell. 
 The VM created will have 1 data disk and 1 network card which can be configure by passing appropriate arguments to the script.
 
 <!-- 
@@ -35,16 +35,16 @@ The detailed steps for VM deployment using Az cmdlets is published at <paste lin
 ## Setup
 
 1. Open Powershell client version 7 and above in administrative mode
-2. Connect to Azure Stack edge device to using Az cmdlets <paste link after document publish>
-3. Ensure that storage account name is properly configured in the hosts file <paste link after document publish>
+2. Connect to Azure Stack edge device using Az cmdlets <paste link after document publish>
+3. Ensure that storage account name is properly configured in the `\etc\hosts` file <paste link after document publish>
 
 ## Running the sample
-The script can be used to fine tune the VM confiuguration:
+The script can be used to fine tune the VM configuration:
 | Parameter       | Description                                |
 |-------------------|--------------------------------------------|
 | `-ResourceGroupName` | The resource group which will be created and used while creating the VM |
 | `-VmName` | The VM name which will be used while creating the VM |
-| `-VMUserName` | The user account which will be created while configuring VM |
+| `-VMUserName` | The user account which will be created on the VM |
 | `-VMPassword` | The password associated with the username |
 | `-OS` | `Linux` or `Windows` |
 | `-VHDPath`| The folder path where the VM vhd is located |
@@ -53,7 +53,7 @@ The script can be used to fine tune the VM confiuguration:
 | `-VMSize` | The VM size <VM size web link> |
 | `-DiskSizeGb` | Size of the data disk created with the VM |
 | `-VNetAddressSpace` | Optional argument which specifies the network address space |
-| `-NicPrivateIp` | Optional argument which specifies static IP. Skip it if using DHCP IP |
+| `-NicPrivateIp` | Optional argument which specifies static IP. Skip if using DHCP IP |
 | `-AzCopy10Path` | The path to azcopy execuatble which will be used to copy the VM vhd |
 
 A sample run using some of the parameters defined above:
