@@ -50,7 +50,7 @@ The script can be used to fine tune the VM configuration:
 | `-VHDPath`| The folder path where the VM vhd is located |
 | `-VHDFile` | The file name for the VM vhd |
 | `-StorageAccountName` | The storage account group which will be created for the VM vhd |
-| `-VMSize` | The VM size <VM size web link> |
+| `-VMSize` | Anyone of the supported VM sizes [VM Size](https://docs.microsoft.com/en-us/azure/databox-online/azure-stack-edge-gpu-virtual-machine-sizes) |
 | `-DiskSizeGb` | Size of the data disk created with the VM |
 | `-VNetAddressSpace` | Optional argument which specifies the network address space |
 | `-NicPrivateIp` | Optional argument which specifies static IP. Skip if using DHCP IP |
