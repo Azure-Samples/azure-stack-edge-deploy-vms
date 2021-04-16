@@ -120,9 +120,9 @@ function NewResourceGroup
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $name=$script:ResourceGroupName,
+        $name,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -151,14 +151,13 @@ function NewStorageAccount
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $saname=$script:StorageAccountName,
+        $saname,
 
-
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName,
+        $rgname,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -196,13 +195,13 @@ function GetStorageAccount
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $name = $script:StorageAccountName,
+        $name,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName
+        $rgname
     )
     LogGreen "Get-AzStorageAccount -name $name -resourcegroupname $rgname"
     Start-Sleep -s 1
@@ -215,13 +214,13 @@ function UploadVhd
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName,
+        $rgname,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $saname=$script:StorageAccountName,
+        $saname,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -282,13 +281,13 @@ function CreateManagedDisk
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName,
+        $rgname,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $saname=$script:StorageAccountName,
+        $saname,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -393,9 +392,9 @@ function CreateImage
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName,
+        $rgname,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -444,9 +443,9 @@ function CreateNetworkInterface
         [String]
         $ipcfgName=$script:ipConfigName,
                 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [String]
-        $rgname=$script:ResourceGroupName,
+        $rgname,
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -456,7 +455,7 @@ function CreateNetworkInterface
         [String]
         $script:DeviceLocation,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [String]$VNetAddressSpace,
 
         [Parameter(Mandatory=$false)]
@@ -508,8 +507,8 @@ function CreateVM
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$false)]
-        [String]$vmName=$script:VmName,
+        [Parameter(Mandatory=$true)]
+        [String]$vmName,
 
         [Parameter(Mandatory=$false)]
         [String]$computerName=$script:ComputerName,
@@ -520,8 +519,8 @@ function CreateVM
         [Parameter(Mandatory=$false)]
         [String]$network=$script:Nic,
 
-        [Parameter(Mandatory=$false)]
-        [String]$rgname=$script:ResourceGroupName,
+        [Parameter(Mandatory=$true)]
+        [String]$rgname,
 
         [Parameter(Mandatory=$false)]
         [String]$script:DeviceLocation='dbeLocal',
