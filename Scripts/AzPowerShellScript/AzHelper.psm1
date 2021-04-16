@@ -197,15 +197,15 @@ function GetStorageAccount
     (
         [Parameter(Mandatory=$true)]
         [String]
-        $name,
+        $saname,
 
         [Parameter(Mandatory=$true)]
         [String]
         $rgname
     )
-    LogGreen "Get-AzStorageAccount -name $name -resourcegroupname $rgname"
+    LogGreen "Get-AzStorageAccount -name $saname -resourcegroupname $rgname"
     Start-Sleep -s 1
-    $out = Get-AzStorageAccount -name $name -resourcegroupname $rgname
+    $out = Get-AzStorageAccount -name $saname -resourcegroupname $rgname
     $out
 }
 
