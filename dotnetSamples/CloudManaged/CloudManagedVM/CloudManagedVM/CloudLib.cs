@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CloudManagedVM
 {
@@ -110,6 +111,43 @@ namespace CloudManagedVM
         }
 
         /// <summary>
+        /// Create a template from the template file and its parameter file
+        /// </summary>
+        /// <param name="templateFile">Template file Path</param>
+        /// <param name="templateParameterFile">Template parameters file path</param>
+        /// <returns>Json string template after merging template and its parameter file</returns>
+        public string CreateTemplate(string templateFile, string templateParameterFile)
+        {
+            dynamic templateObj = JObject.Parse(File.ReadAllText(templateFile));
+            dynamic templateParamsObj = JObject.Parse(File.ReadAllText(templateParameterFile));
+
+            dynamic payload = new JObject();
+            payload.properties = new JObject();
+            payload.properties.template = templateObj;
+            payload.properties.parameters = templateParamsObj.parameters;
+            payload.properties.mode = "Incremental";
+
+            return payload.ToString();
+        }
+
+        /// <summary>
+        /// Trigger a template deployment from Saas with separate template file and template params.
+        /// </summary>
+        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="templateFile">Json template to be deployed</param>
+        /// <param name="templateParameterFile">Json template parameters to be used</param>
+        /// <param name="deploymentName">Name of Saas deployment</param>
+        /// <returns>None if deployment succeeds else throws exception</returns>
+        public void DeployTemplateAtResourceGroupLevel(string saasResourceGroup, string saasDeviceName, string templateFile, string templateParameterFile, string linkedResourceGroup, string deploymentName = "")
+        {
+            Console.WriteLine($"Creating template");
+            string template = CreateTemplate(templateFile, templateParameterFile);
+
+            DeployTemplate(saasResourceGroup, saasDeviceName, template, linkedResourceGroup, deploymentName);
+        }
+
+        /// <summary>
         /// Trigger a template deployment from Saas.
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
@@ -117,7 +155,7 @@ namespace CloudManagedVM
         /// <param name="template">Json template to be deployed</param>
         /// <param name="deploymentName">Name of Saas deployment</param>
         /// <returns>None if deployment succeeds else throws exception</returns>
-        public void DeployTemplate(string saasResourceGroup, string saasDeviceName, string template, string deploymentName = "")
+        public void DeployTemplate(string saasResourceGroup, string saasDeviceName, string template, string linkedResourceGroup = "", string deploymentName = "")
         {
             Console.WriteLine($"Deploying template under Saas ResourceGroup {saasResourceGroup} on ASE device {saasDeviceName}");
             // Generate deployment name dynamically if not provided
@@ -128,7 +166,14 @@ namespace CloudManagedVM
             Console.WriteLine($"Deployment {deploymentName} is deploying template: {template}");
 
             string linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
-            string deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            string deploymentUri;
+            if (String.IsNullOrEmpty(linkedResourceGroup))
+            {
+                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            } else
+            {
+                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{linkedResourceGroup}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            }
             IRestResponse response = MakeRestCall(deploymentUri, Method.PUT, SAAS_API_VERSION, body: template);
 
             var statusUri = GetAzureAsyncHeader(response);
@@ -154,7 +199,6 @@ namespace CloudManagedVM
                     try
                     {
                         statusResponse = MakeRestCallWithRetry(statusUri);
-                        PollForDeployments(saasResourceGroup, linkedSubId, deploymentUri);
                     }
                     catch (Exception exc)
                     {
@@ -238,7 +282,6 @@ namespace CloudManagedVM
             ClientCredential clientCredential = new ClientCredential(clientId, clientSecretKey);
             var tokenResponse = await context.AcquireTokenAsync("https://management.azure.com/", clientCredential);
             var accessToken = tokenResponse.AccessToken;
-            Console.WriteLine($"Got token: {accessToken}");
             return accessToken;
         }
 
@@ -1206,40 +1249,6 @@ namespace CloudManagedVM
         #endregion
 
         #region PrivateHelper
-
-        /// <summary>
-        /// Poll for both the deployments: deployment triggered from Saas and depolyment triggered locally
-        /// </summary>
-        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
-        /// <param name="linkedSubId">LinkedSubscriptionId</param>
-        /// <param name="deploymentUri"> Deployment uri triggered from Saas </param>
-        /// <returns>None</returns>
-        private void PollForDeployments(string saasResourceGroup, string linkedSubId, string deploymentUri)
-        {
-            // We put a try catch here because we do not want the caller to fail due to failures in polling.
-            // This is just for info purpose
-            try
-            {
-                // Check main deployment status
-                IRestResponse response = MakeRestCallWithRetry(deploymentUri, SAAS_API_VERSION);
-                dynamic resp = JObject.Parse(response.Content);
-                string deploymentName = resp.Name;
-                string status = resp.properties.provisioningState;
-                Console.WriteLine($"Deployment {deploymentName} provisioning state: {status}");
-
-                // Check the inner deployment triggered on device
-                string innerDeploymentName = resp.properties.dependencies[0].resourceName;
-                string innerDeploymentResourceType = resp.properties.dependencies[0].resourceType;
-                // We should have a better mechanism of figuring out resource group for deployment. May be parse the id field in future.
-                string innerDeploymentResourceGroup = resp.properties.dependencies[0].dependsOn[0].resourceName;
-                string innerDeploymentOutput = GetLinkedResource(innerDeploymentResourceType, innerDeploymentName, innerDeploymentResourceGroup, saasResourceGroup, linkedSubId);
-                Console.WriteLine($"Deployment {innerDeploymentName} content: {innerDeploymentOutput}");
-            }
-            catch (Exception exc)
-            {
-                Console.WriteLine($"Got error while polling deployments: {exc}");
-            }
-        }
 
         /// <summary>
         /// Validates a rest response and returns it as is if there is no exception

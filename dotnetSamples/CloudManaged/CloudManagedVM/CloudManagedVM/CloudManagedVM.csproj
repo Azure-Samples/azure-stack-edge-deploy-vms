@@ -5,6 +5,7 @@
     <AssemblyName>CloudManagedVM</AssemblyName>
     <PackageId>CloudManagedVM</PackageId>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>

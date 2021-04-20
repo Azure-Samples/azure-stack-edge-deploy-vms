@@ -6,12 +6,16 @@ namespace CloudManagedVM
 {
     class SampleCreateImage
     {
-        public static void CreateImage(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath)
+        public static void CreateImageWithSubscriptionLevelTemplate(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath)
         {
             var template = InitializeImageTemplate(templateFilePath, templateParamsFilePath);
             client.DeployTemplate(saaResourceGroup, deviceName, template);
         }
 
+        public static void CreateImageWithResourceGroupLevelTemplate(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath, string linkedResourceGroup)
+        {
+            client.DeployTemplateAtResourceGroupLevel(saaResourceGroup, deviceName, templateFilePath, templateParamsFilePath, linkedResourceGroup);
+        }
 
         private static string InitializeImageTemplate(string templateFilePath, string templateParamsFilePath)
         {

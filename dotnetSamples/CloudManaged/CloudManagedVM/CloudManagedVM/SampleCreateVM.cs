@@ -6,10 +6,15 @@ namespace CloudManagedVM
 {
     class SampleVMCreate
     {
-        public static void CreateVM(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath)
+        public static void CreateVMWithSubscriptionLevelTemplate(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath)
         {
             var template = InitializeVMTemplate(templateFilePath, templateParamsFilePath, client, deviceName, saaResourceGroup);
             client.DeployTemplate(saaResourceGroup, deviceName, template);
+        }
+
+        public static void CreateVMWithResourceGroupLevelTemplate(CloudLib client, string deviceName, string saaResourceGroup, string templateFilePath, string templateParamsFilePath, string linkedResourceGroup)
+        {
+            client.DeployTemplateAtResourceGroupLevel(saaResourceGroup, deviceName, templateFilePath, templateParamsFilePath, linkedResourceGroup);
         }
 
         private static string InitializeVMTemplate(string templateFilePath, string templateParamsFilePath, CloudLib client, string deviceName, string saasResourceGroup)
