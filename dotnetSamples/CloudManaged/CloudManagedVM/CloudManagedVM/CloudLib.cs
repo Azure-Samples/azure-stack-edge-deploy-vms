@@ -36,6 +36,13 @@ namespace CloudManagedVM
             Client = new RestClient(ArmEndpoint);
         }
 
+        public CloudLib(string accesssToken, string subscriptionId)
+        {
+            Token = accesssToken;
+            SubscriptionId = subscriptionId;
+            Client = new RestClient(ArmEndpoint);
+        }
+
         #region PublicMethods
 
         /// <summary>
@@ -113,27 +120,8 @@ namespace CloudManagedVM
         }
 
         /// <summary>
-        /// Create a template from the template file and its parameter file
-        /// </summary>
-        /// <param name="templateFile">Template file Path</param>
-        /// <param name="templateParameterFile">Template parameters file path</param>
-        /// <returns>Json string template after merging template and its parameter file</returns>
-        public string CreateTemplate(string templateFile, string templateParameterFile)
-        {
-            dynamic templateObj = JObject.Parse(File.ReadAllText(templateFile));
-            dynamic templateParamsObj = JObject.Parse(File.ReadAllText(templateParameterFile));
-
-            dynamic payload = new JObject();
-            payload.properties = new JObject();
-            payload.properties.template = templateObj;
-            payload.properties.parameters = templateParamsObj.parameters;
-            payload.properties.mode = "Incremental";
-
-            return payload.ToString();
-        }
-
-        /// <summary>
-        /// Trigger a template deployment from Saas with separate template file and template params.
+        /// Trigger a template deployment from Saas with separate template file and template params at resource group level.
+        /// This is equivalent of New-AzureRmResourceGroupDeployment
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <param name="saasDeviceName">ASE device name</param>
@@ -150,97 +138,22 @@ namespace CloudManagedVM
         }
 
         /// <summary>
-        /// Trigger a template deployment from Saas.
+        /// Trigger a template deployment from Saas with separate template file and template params at subscription level.
+        /// This is equivalent of New-AzureRmDeployment
         /// </summary>
         /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
         /// <param name="saasDeviceName">ASE device name</param>
-        /// <param name="template">Json template to be deployed</param>
+        /// <param name="templateFile">Json template to be deployed</param>
+        /// <param name="templateParameterFile">Json template parameters to be used</param>
+        /// <param name="location">Location of deployment. For ASE, its always dbelocal</param>
         /// <param name="deploymentName">Name of Saas deployment</param>
         /// <returns>None if deployment succeeds else throws exception</returns>
-        public void DeployTemplate(string saasResourceGroup, string saasDeviceName, string template, string linkedResourceGroup = "", string deploymentName = "")
+        public void DeployTemplateAtSubscriptionLevel(string saasResourceGroup, string saasDeviceName, string templateFile, string templateParameterFile, string location, string deploymentName = "")
         {
-            Console.WriteLine($"Deploying template under Saas ResourceGroup {saasResourceGroup} on ASE device {saasDeviceName}");
-            // Generate deployment name dynamically if not provided
-            if (String.IsNullOrEmpty(deploymentName))
-            {
-                deploymentName = "deployment" + Guid.NewGuid().ToString().Split('-')[0];
-            }
-            Console.WriteLine($"Deployment {deploymentName} is deploying template: {template}");
+            Console.WriteLine($"Creating template");
+            string template = CreateTemplate(templateFile, templateParameterFile, location);
 
-            string linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
-            string deploymentUri;
-            if (String.IsNullOrEmpty(linkedResourceGroup))
-            {
-                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
-            } else
-            {
-                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{linkedResourceGroup}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
-            }
-            IRestResponse response = MakeRestCall(deploymentUri, Method.PUT, SAAS_API_VERSION, body: template);
-
-            var statusUri = GetAzureAsyncHeader(response);
-
-            // Poll for the deployment status triggered above
-            Console.WriteLine($"Poll for the status of {deploymentName} with status uri {statusUri}");
-            // Wait for max 60 mins from now for template deployment
-            Stopwatch timer = new Stopwatch();
-            int deploymentTimeout = 50;
-            Console.WriteLine("Starting the timer");
-            timer.Start();
-            dynamic resp;
-            string status;
-            IRestResponse statusResponse;
-            try
-            {
-                while (timer.Elapsed < TimeSpan.FromMinutes(deploymentTimeout))
-                {
-                    Console.WriteLine("Sleeping for 15 seconds");
-                    System.Threading.Thread.Sleep(15000);
-
-                    Console.WriteLine("Fetch deployment status");
-                    try
-                    {
-                        statusResponse = MakeRestCallWithRetry(statusUri);
-                    }
-                    catch (Exception exc)
-                    {
-                        Console.WriteLine($"Got exception of type {exc.GetType()} and error messsage {exc.Message}");
-                        dynamic error = JObject.Parse(exc.Message);
-                        string errorCode = Convert.ToString(error.error.code);
-                        if (errorCode.Equals("NotFound", StringComparison.OrdinalIgnoreCase))
-                            continue;
-                        else
-                            throw exc;
-                    }
-                    resp = JObject.Parse(statusResponse.Content);
-                    status = resp.status;
-                    Console.WriteLine($"Provisioning state: {status}");
-
-                    if (status.Equals("Succeeded", StringComparison.OrdinalIgnoreCase))
-                        return;
-                    else if (status.Equals("Failed", StringComparison.OrdinalIgnoreCase))
-                        throw new Exception("Deployment failed");
-                }
-            }
-            finally
-            {
-                Console.WriteLine("Stopping the timer");
-                timer.Stop();
-            }
-
-            // Sometimes if AzureArmAgent crashes or restarts, we may get timed out while polling for status uri above.
-            // We will check for the deployment resource once to confirm if things actually worked or not.
-            Console.WriteLine($"Timed out after {deploymentTimeout} mins while waiting for statusURI to return Succeeded. Checking for deployment {deploymentName} status");
-            response = MakeRestCallWithRetry(deploymentUri, SAAS_API_VERSION);
-            resp = JObject.Parse(response.Content);
-            status = resp.properties.provisioningState;
-            Console.WriteLine($"Deployment {deploymentName} provisioning state: {status}");
-
-            if (!status.Equals("Succeeded", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new Exception($"Deployment {deploymentName} did not succeed");
-            }
-            Console.WriteLine($"Deployment {deploymentName} succeeded. ");
+            DeployTemplate(saasResourceGroup, saasDeviceName, template, deploymentName:deploymentName);
         }
 
         /// <summary>
@@ -1390,6 +1303,125 @@ namespace CloudManagedVM
                 timer.Stop();
             }
             throw new TimeoutException($"Timed out after {timeout} mins while waiting for {operationPerformed} to finish");
+        }
+
+        /// <summary>
+        /// Create a template from the template file and its parameter file
+        /// </summary>
+        /// <param name="templateFile">Template file Path</param>
+        /// <param name="templateParameterFile">Template parameters file path</param>
+        /// <returns>Json string template after merging template and its parameter file</returns>
+        private string CreateTemplate(string templateFile, string templateParameterFile, string location = "")
+        {
+            dynamic templateObj = JObject.Parse(File.ReadAllText(templateFile));
+            dynamic templateParamsObj = JObject.Parse(File.ReadAllText(templateParameterFile));
+
+            dynamic payload = new JObject();
+            payload.properties = new JObject();
+            payload.properties.template = templateObj;
+            payload.properties.parameters = templateParamsObj.parameters;
+            payload.properties.mode = "Incremental";
+            if (!String.IsNullOrEmpty(location))
+            {
+                payload.location = location;
+            }
+
+            return payload.ToString();
+        }
+
+        /// <summary>
+        /// Trigger a template deployment from Saas.
+        /// </summary>
+        /// <param name="saasResourceGroup">Saas Resource Group containing ASE device</param>
+        /// <param name="saasDeviceName">ASE device name</param>
+        /// <param name="template">Json template to be deployed</param>
+        /// <param name="deploymentName">Name of Saas deployment</param>
+        /// <returns>None if deployment succeeds else throws exception</returns>
+        private void DeployTemplate(string saasResourceGroup, string saasDeviceName, string template, string linkedResourceGroup = "", string deploymentName = "")
+        {
+            Console.WriteLine($"Deploying template under Saas ResourceGroup {saasResourceGroup} on ASE device {saasDeviceName}");
+            // Generate deployment name dynamically if not provided
+            if (String.IsNullOrEmpty(deploymentName))
+            {
+                deploymentName = "deployment" + Guid.NewGuid().ToString().Split('-')[0];
+            }
+            Console.WriteLine($"Deployment {deploymentName} is deploying template: {template}");
+
+            string linkedSubId = GetLinkedSubscriptionId(saasDeviceName, saasResourceGroup);
+            string deploymentUri;
+            if (String.IsNullOrEmpty(linkedResourceGroup))
+            {
+                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            }
+            else
+            {
+                deploymentUri = $"/subscriptions/{SubscriptionId}/resourcegroups/{saasResourceGroup}/providers/Microsoft.AzureStack/linkedSubscriptions/{linkedSubId}/linkedResourceGroups/{linkedResourceGroup}/linkedProviders/Microsoft.Resources/deployments/{deploymentName}";
+            }
+            IRestResponse response = MakeRestCall(deploymentUri, Method.PUT, SAAS_API_VERSION, body: template);
+
+            var statusUri = GetAzureAsyncHeader(response);
+
+            // Poll for the deployment status triggered above
+            Console.WriteLine($"Poll for the status of {deploymentName} with status uri {statusUri}");
+            // Wait for max 60 mins from now for template deployment
+            Stopwatch timer = new Stopwatch();
+            int deploymentTimeout = 50;
+            Console.WriteLine("Starting the timer");
+            timer.Start();
+            dynamic resp;
+            string status;
+            IRestResponse statusResponse;
+            try
+            {
+                while (timer.Elapsed < TimeSpan.FromMinutes(deploymentTimeout))
+                {
+                    Console.WriteLine("Sleeping for 15 seconds");
+                    System.Threading.Thread.Sleep(15000);
+
+                    Console.WriteLine("Fetch deployment status");
+                    try
+                    {
+                        statusResponse = MakeRestCallWithRetry(statusUri);
+                    }
+                    catch (Exception exc)
+                    {
+                        Console.WriteLine($"Got exception of type {exc.GetType()} and error messsage {exc.Message}");
+                        dynamic error = JObject.Parse(exc.Message);
+                        string errorCode = Convert.ToString(error.error.code);
+                        if (errorCode.Equals("NotFound", StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        else
+                            throw exc;
+                    }
+                    resp = JObject.Parse(statusResponse.Content);
+                    status = resp.status;
+                    Console.WriteLine($"Provisioning state: {status}");
+
+                    if (status.Equals("Succeeded", StringComparison.OrdinalIgnoreCase))
+                        return;
+                    else if (status.Equals("Failed", StringComparison.OrdinalIgnoreCase))
+                        throw new Exception("Deployment failed");
+                }
+            }
+            finally
+            {
+                Console.WriteLine("Stopping the timer");
+                timer.Stop();
+            }
+
+            // Sometimes if AzureArmAgent crashes or restarts, we may get timed out while polling for status uri above.
+            // We will check for the deployment resource once to confirm if things actually worked or not.
+            Console.WriteLine($"Timed out after {deploymentTimeout} mins while waiting for statusURI to return Succeeded. Checking for deployment {deploymentName} status");
+            response = MakeRestCallWithRetry(deploymentUri, SAAS_API_VERSION);
+            resp = JObject.Parse(response.Content);
+            status = resp.properties.provisioningState;
+            Console.WriteLine($"Deployment {deploymentName} provisioning state: {status}");
+
+            if (!status.Equals("Succeeded", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new Exception($"Deployment {deploymentName} did not succeed");
+            }
+            Console.WriteLine($"Deployment {deploymentName} succeeded. ");
         }
 
         #endregion

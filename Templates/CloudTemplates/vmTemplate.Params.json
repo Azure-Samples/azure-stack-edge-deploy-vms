@@ -1,45 +1,51 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "rgName": {
-      "value": ""
-    },
-    "vmName": {
-      "value": ""
-    },
-    "adminUsername": {
-      "value": ""
-    },
-    "Password": {
-      "value": ""
-    },
-    "imageName": {
-      "value": ""
-    },
-    "imageRG": {
-      "value": ""
-    },
-    "vmSize": {
-      "value": ""
-    },
-    "vnetName": {
-      "value": ""
-    },
-    "vnetRG": {
-      "value": ""
-    },
-    "subnetName": {
-      "value": ""
-    },
-    "nicName": {
-      "value": ""
-    },
-    "IPConfigName": {
-      "value": ""
-    },
-    "privateIPAddress": {
-      "value": ""
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{
+        "rgName":{
+            "value":"cloudrg11"
+        },
+        "rgLocation":{
+            "value":"dbelocal"
+        },
+        "vmName":{
+            "value":"vm11"
+        },
+        "adminUsername":{
+            "value":"Administrator"
+        },
+        "Password":{
+            "value":"Password1"
+        },
+        "imageName":{
+            "value":"image8"
+        },
+        "imageRG":{
+            "value":"cloudrg8"
+        },
+        "vmSize":{
+            "value":"Standard_D1_v2"
+        },
+        "vnetName":{
+            "value":"ASEVNET"
+        },
+        "vnetRG":{
+            "value":"ASERG"
+        },
+        "subnetName":{
+            "value":"ASEVNETsubNet"
+        },
+        "nicName":{
+            "value":"nic11"
+        },
+        "IPConfigName":{
+            "value":"ipconfig11"
+        },
+        "privateIPAddress":{
+            "value":""
+        },
+        "vmDeploymentName":{
+            "value":"vmDeployment11"
+        }
     }
-  }
 }

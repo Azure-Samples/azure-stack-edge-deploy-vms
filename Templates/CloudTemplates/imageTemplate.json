@@ -1,202 +1,227 @@
 {
-    "location":"dbelocal",
-    "properties":{
-        "mode":"incremental",
-        "debugSetting":{
-            "detailLevel":"responseContent"
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{
+        "rgName":{
+            "type":"string"
         },
-        "parameters":{
-            "rgName":{
-                "value":""
-            },
-            "rgLocation":{
-                "value":"dbelocal"
+        "rgLocation":{
+            "type":"string"
+        },
+        "sourceBlobUri":{
+            "type":"string",
+            "metadata":{
+                "description":"The full source blob sas uri."
             }
         },
-        "template":{
-            "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-            "contentVersion":"1.0.0.0",
-            "parameters":{
-                "rgName":{
-                    "type":"string"
+        "targetStorageAccountName":{
+            "type":"string",
+            "metadata":{
+                "description":"The target storage account name."
+            }
+        },
+        "targetContainerName":{
+            "type":"string",
+            "metadata":{
+                "description":"The target container name."
+            }
+        },
+        "ingestionJobName":{
+            "type":"string",
+            "metadata":{
+                "description":"The name of the blob vhd download job."
+            }
+        },
+        "imageName":{
+            "type":"string",
+            "metadata":{
+                "description":"The name of the image to be created."
+            }
+        },
+        "osType":{
+            "type":"string",
+            "metadata":{
+                "description":"The os type - Linux or Windows."
+            }
+        },
+        "imageDeploymentName":{
+            "type":"string",
+            "metadata":{
+                "description":"image deployment name."
+            }
+        }
+    },
+    "resources":[
+        {
+            "type":"Microsoft.Resources/resourceGroups",
+            "apiVersion":"2018-05-01",
+            "location":"[parameters('rgLocation')]",
+            "name":"[parameters('rgName')]",
+            "properties":{
+                
+            }
+        },
+        {
+            "type":"Microsoft.Resources/deployments",
+            "apiVersion":"2018-09-01",
+            "name":"[parameters('imageDeploymentName')]",
+            "resourceGroup":"[parameters('rgName')]",
+            "dependsOn":[
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+            ],
+            "properties":{
+                "mode":"incremental",
+                "expressionEvaluationOptions":{
+                    "scope":"inner"
                 },
-                "rgLocation":{
-                    "type":"string"
-                }
-            },
-            "resources":[
-                {
-                    "type":"Microsoft.Resources/resourceGroups",
-                    "apiVersion":"2018-05-01",
-                    "location":"[parameters('rgLocation')]",
-                    "name":"[parameters('rgName')]",
-                    "properties":{
-                        
+                "parameters":{
+                    "sourceBlobUri":{
+                        "value":"[parameters('sourceBlobUri')]"
+                    },
+                    "targetStorageAccountName":{
+                        "value":"[parameters('targetStorageAccountName')]"
+                    },
+                    "targetContainerName":{
+                        "value":"[parameters('targetContainerName')]"
+                    },
+                    "ingestionJobName":{
+                        "value":"[parameters('ingestionJobName')]"
+                    },
+                    "imageName":{
+                        "value":"[parameters('imageName')]"
+                    },
+                    "osType":{
+                        "value":"[parameters('osType')]"
                     }
                 },
-                {
-                    "type":"Microsoft.Resources/deployments",
-                    "apiVersion":"2018-09-01",
-                    "name":"",
-                    "resourceGroup":"[parameters('rgName')]",
-                    "dependsOn":[
-                        "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
-                    ],
-                    "properties":{
-                        "mode":"incremental",
-                        "expressionEvaluationOptions":{
-                            "scope":"inner"
-                        },
-                        "parameters":{
-                            "sourceBlobUri":{
-                                "value":""
-                            },
-                            "targetStorageAccountName":{
-                                "value":""
-                            },
-                            "targetContainerName":{
-                                "value":""
-                            },
-                            "ingestionJobName":{
-                                "value":""
-                            },
-                            "imageName":{
-                                "value":""
-                            },
-                            "osType":{
-                                "value":""
+                "template":{
+                    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion":"1.0.0.0",
+                    "apiProfile":"2018-03-01-hybrid",
+                    "variables":{
+                        "location":"dbelocal",
+                        "azurebridgeApiVersion":"2020-07-01",
+                        "computeApiVersion":"2017-03-30",
+                        "deploymentApiVersion":"2018-09-01",
+                        "storageAccountApiVersion":"2016-01-01",
+                        "cleanupDeploymentName":"[concat('cleanup', parameters('ingestionJobName'))]",
+                        "storageAccountNameTidy":"[toLower(trim(parameters('targetStorageAccountName')))]",
+                        "targetBlobUri":"[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]"
+                    },
+                    "parameters":{
+                        "sourceBlobUri":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The full source blob sas uri."
                             }
                         },
-                        "template":{
-                            "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                            "contentVersion":"1.0.0.0",
-                            "apiProfile":"2018-03-01-hybrid",
-                            "variables":{
-                                "location":"dbelocal",
-                                "azurebridgeApiVersion":"2020-07-01",
-                                "computeApiVersion":"2017-03-30",
-                                "deploymentApiVersion":"2018-09-01",
-                                "storageAccountApiVersion":"2016-01-01",
-                                "cleanupDeploymentName":"[concat('cleanup', parameters('ingestionJobName'))]",
-                                "storageAccountNameTidy":"[toLower(trim(parameters('targetStorageAccountName')))]",
-                                "targetBlobUri":"[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]"
-                            },
-                            "parameters":{
-                                "sourceBlobUri":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The full source blob sas uri."
-                                    }
-                                },
-                                "targetStorageAccountName":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The target storage account name."
-                                    }
-                                },
-                                "targetContainerName":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The target container name."
-                                    }
-                                },
-                                "ingestionJobName":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The name of the blob vhd download job."
-                                    }
-                                },
-                                "imageName":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The name of the image to be created."
-                                    }
-                                },
-                                "osType":{
-                                    "type":"string",
-                                    "metadata":{
-                                        "description":"The os type - Linux or Windows."
-                                    }
-                                }
-                            },
-                            "resources":[
-                                {
-                                    "apiVersion":"[variables('storageAccountApiVersion')]",
-                                    "name":"[parameters('targetStorageAccountName')]",
-                                    "location":"[variables('location')]",
-                                    "type":"Microsoft.Storage/storageAccounts",
-                                    "sku":{
-                                        "name":"Standard_LRS"
-                                    },
-                                    "kind":"Storage"
-                                },
-                                {
-                                    "apiVersion":"[variables('azurebridgeApiVersion')]",
-                                    "name":"[concat(variables('location'), '/', parameters('ingestionJobName'))]",
-                                    "location":"[variables('location')]",
-                                    "type":"Microsoft.AzureBridge/locations/ingestionJobs",
-                                    "kind":"BlobDownload",
-                                    "properties":{
-                                        "SourceBlobUri":"[parameters('sourceBlobUri')]",
-                                        "TargetStorageAccountConnectionString":"[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', split(split(reference(parameters('targetStorageAccountName')).primaryEndpoints.blob, 'blob.')[1], '/')[0], ';AccountName=', variables('storageAccountNameTidy'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountNameTidy')), variables('storageAccountApiVersion')).keys[0].value)]",
-                                        "TargetContainerName":"[parameters('targetContainerName')]"
-                                    },
-                                    "dependsOn":[
-                                        "[resourceId('Microsoft.Storage/storageAccounts', parameters('targetStorageAccountName'))]"
-                                    ]
-                                },
-                                {
-                                    "apiVersion":"[variables('computeApiVersion')]",
-                                    "name":"[parameters('imageName')]",
-                                    "location":"[variables('location')]",
-                                    "type":"Microsoft.Compute/images",
-                                  "properties": {
-                                    "storageProfile": {
-                                      "osDisk": {
-                                        "osType": "[parameters('osType')]",
-                                        "osState": "Generalized",
-                                        "blobUri": "[reference(variables('targetBlobUri')).TargetImageBlobUri]",
-                                        "storageAccountType": "Standard_LRS",
-                                        "caching": "ReadWrite"
-                                      }
-                                    }
-                                  },
-                                    "dependsOn":[
-                                        "[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]"
-                                    ]
-                                },
-                                {
-                                    "apiVersion":"[variables('deploymentApiVersion')]",
-                                    "type":"Microsoft.Resources/deployments",
-                                    "name":"[variables('cleanupDeploymentName')]",
-                                    "dependsOn":[
-                                        "[resourceId('Microsoft.Compute/images', parameters('imageName'))]"
-                                    ],
-                                    "properties":{
-                                        "mode":"Incremental",
-                                        "template":{
-                                            "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                                            "contentVersion":"1.0.0.0",
-                                            "resources":[
-                                                {
-                                                    "apiVersion":"[variables('azurebridgeApiVersion')]",
-                                                    "name":"[concat(variables('location'), '/', parameters('ingestionJobName'))]",
-                                                    "location":"[variables('location')]",
-                                                    "type":"Microsoft.AzureBridge/locations/ingestionJobs",
-                                                    "kind":"BlobCleanup",
-                                                    "properties":{
-                                                        
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
+                        "targetStorageAccountName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The target storage account name."
+                            }
+                        },
+                        "targetContainerName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The target container name."
+                            }
+                        },
+                        "ingestionJobName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The name of the blob vhd download job."
+                            }
+                        },
+                        "imageName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The name of the image to be created."
+                            }
+                        },
+                        "osType":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The os type - Linux or Windows."
+                            }
                         }
-                    }
+                    },
+                    "resources":[
+                        {
+                            "apiVersion":"[variables('storageAccountApiVersion')]",
+                            "name":"[parameters('targetStorageAccountName')]",
+                            "location":"[variables('location')]",
+                            "type":"Microsoft.Storage/storageAccounts",
+                            "sku":{
+                                "name":"Standard_LRS"
+                            },
+                            "kind":"Storage"
+                        },
+                        {
+                            "apiVersion":"[variables('azurebridgeApiVersion')]",
+                            "name":"[concat(variables('location'), '/', parameters('ingestionJobName'))]",
+                            "location":"[variables('location')]",
+                            "type":"Microsoft.AzureBridge/locations/ingestionJobs",
+                            "kind":"BlobDownload",
+                            "properties":{
+                                "SourceBlobUri":"[parameters('sourceBlobUri')]",
+                                "TargetStorageAccountConnectionString":"[concat('DefaultEndpointsProtocol=https;EndpointSuffix=', split(split(reference(parameters('targetStorageAccountName')).primaryEndpoints.blob, 'blob.')[1], '/')[0], ';AccountName=', variables('storageAccountNameTidy'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountNameTidy')), variables('storageAccountApiVersion')).keys[0].value)]",
+                                "TargetContainerName":"[parameters('targetContainerName')]"
+                            },
+                            "dependsOn":[
+                                "[resourceId('Microsoft.Storage/storageAccounts', parameters('targetStorageAccountName'))]"
+                            ]
+                        },
+                        {
+                            "apiVersion":"[variables('computeApiVersion')]",
+                            "name":"[parameters('imageName')]",
+                            "location":"[variables('location')]",
+                            "type":"Microsoft.Compute/images",
+                            "properties":{
+                                "storageProfile":{
+                                    "osDisk":{
+                                        "osType":"[parameters('osType')]",
+                                        "osState":"Generalized",
+                                        "blobUri":"[reference(variables('targetBlobUri')).TargetImageBlobUri]",
+                                        "storageAccountType":"Standard_LRS",
+                                        "caching":"ReadWrite"
+                                    }
+                                }
+                            },
+                            "dependsOn":[
+                                "[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]"
+                            ]
+                        },
+                        {
+                            "apiVersion":"[variables('deploymentApiVersion')]",
+                            "type":"Microsoft.Resources/deployments",
+                            "name":"[variables('cleanupDeploymentName')]",
+                            "dependsOn":[
+                                "[resourceId('Microsoft.Compute/images', parameters('imageName'))]"
+                            ],
+                            "properties":{
+                                "mode":"Incremental",
+                                "template":{
+                                    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion":"1.0.0.0",
+                                    "resources":[
+                                        {
+                                            "apiVersion":"[variables('azurebridgeApiVersion')]",
+                                            "name":"[concat(variables('location'), '/', parameters('ingestionJobName'))]",
+                                            "location":"[variables('location')]",
+                                            "type":"Microsoft.AzureBridge/locations/ingestionJobs",
+                                            "kind":"BlobCleanup",
+                                            "properties":{
+                                                
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
                 }
-            ]
+            }
         }
-    }
+    ]
 }

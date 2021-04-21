@@ -1,27 +1,33 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "imageName": {
-      "value": ""
-    },
-    "ingestionJobName": {
-      "value": ""
-    },
-    "osType": {
-      "value": ""
-    },
-    "rgName": {
-      "value": ""
-    },
-    "sourceBlobUri": {
-      "value": ""
-    },
-    "targetContainerName": {
-      "value": ""
-    },
-    "targetStorageAccountName": {
-      "value": ""
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{
+        "rgName":{
+            "value":"cloudrg8"
+        },
+        "rgLocation":{
+            "value":"dbelocal"
+        },
+        "sourceBlobUri":{
+            "value":"https://databoxedgeutdst.blob.core.windows.net/ingestionjobcontainer/ubuntu18.04waagent.vhd?sp=rw&st=2021-04-21T17:51:16Z&se=2021-04-25T01:51:16Z&sv=2020-02-10&sr=b&sig=A7gVK8qj%2BtIupvU1TKcJkPGgObhep7QQjEQF3KmCRCM%3D"
+        },
+        "targetStorageAccountName":{
+            "value":"sacloud8"
+        },
+        "targetContainerName":{
+            "value":"con8"
+        },
+        "ingestionJobName":{
+            "value":"ingestionjob8"
+        },
+        "imageName":{
+            "value":"image8"
+        },
+        "osType":{
+            "value":"Linux"
+        },
+        "imageDeploymentName":{
+            "value":"imageDeployment8"
+        }
     }
-  }
 }
