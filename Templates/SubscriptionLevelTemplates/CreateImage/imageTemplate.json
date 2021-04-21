@@ -46,6 +46,7 @@
         },
         "imageDeploymentName":{
             "type":"string",
+            "defaultValue": "[concat('imageDeployment', split(newGuid(), '-')[0])]",
             "metadata":{
                 "description":"image deployment name."
             }

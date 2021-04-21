@@ -83,6 +83,7 @@
         },
         "vmDeploymentName":{
             "type":"string",
+            "defaultValue": "[concat('vmDeployment', split(newGuid(), '-')[0])]",
             "metadata":{
                 "description":"VM deployment name"
             }

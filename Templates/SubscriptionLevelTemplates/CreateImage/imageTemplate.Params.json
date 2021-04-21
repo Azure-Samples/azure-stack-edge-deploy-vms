@@ -25,9 +25,6 @@
         },
         "osType":{
             "value":"Linux"
-        },
-        "imageDeploymentName":{
-            "value":"imageDeployment8"
         }
     }
 }

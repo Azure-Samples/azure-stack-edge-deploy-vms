@@ -43,9 +43,6 @@
         },
         "privateIPAddress":{
             "value":""
-        },
-        "vmDeploymentName":{
-            "value":"vmDeployment11"
         }
     }
 }
