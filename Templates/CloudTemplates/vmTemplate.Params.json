@@ -3,25 +3,25 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "RG1"
+      "value": ""
     },
     "vmName": {
-      "value": "vm1"
+      "value": ""
     },
     "adminUsername": {
-      "value": "Administrator"
+      "value": ""
     },
     "Password": {
-      "value": "Password123"
+      "value": ""
     },
     "imageName": {
-      "value": "image1"
+      "value": ""
     },
     "imageRG": {
-      "value": "RG1"
+      "value": ""
     },
     "vmSize": {
-      "value": "Standard_D1_V2"
+      "value": ""
     },
     "vnetName": {
       "value": ""
@@ -33,10 +33,10 @@
       "value": ""
     },
     "nicName": {
-      "value": "nic-vm1-abc123"
+      "value": ""
     },
     "IPConfigName": {
-      "value": "ipconfig-vm1-abc123"
+      "value": ""
     },
     "privateIPAddress": {
       "value": ""

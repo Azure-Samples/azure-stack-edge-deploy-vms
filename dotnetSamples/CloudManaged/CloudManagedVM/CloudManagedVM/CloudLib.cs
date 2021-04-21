@@ -24,13 +24,15 @@ namespace CloudManagedVM
         static string SAAS_ASE_RESOURCE_API_VERSION = "2020-09-01";
         IRestClient Client;
 
-        public CloudLib(string accessKey, string tenantId, string clientId, string subscriptionId)
+        public CloudLib(string accessKey, string tenantId, string clientId, string subscriptionId, string armEndPoint = "management.azure.com")
         {
             TenantId = tenantId;
             ClientId = clientId;
             SubscriptionId = subscriptionId;
             var task = GetAzureAccessTokenAsync(TenantId, ClientId, accessKey);
             Token = task.GetAwaiter().GetResult();
+
+            ArmEndpoint = $"https://{armEndPoint}/";
             Client = new RestClient(ArmEndpoint);
         }
 

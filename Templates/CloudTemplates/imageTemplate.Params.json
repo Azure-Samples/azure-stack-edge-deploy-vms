@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "imageName": {
-      "value": "image1"
+      "value": ""
     },
     "ingestionJobName": {
       "value": ""
     },
     "osType": {
-      "value": "Linux"
+      "value": ""
     },
     "rgName": {
-      "value": "RG1"
+      "value": ""
     },
     "sourceBlobUri": {
-      "value": "https://databoxedgeutdst.blob.core.windows.net/ingestionjobcontainer/WindowsServer2016Datacenter.vhd?sp=rw&st=2021-03-31T02:37:21Z&se=2021-03-31T10:37:21Z&sv=2020-02-10&sr=b&sig=fEBzN%2FeMo6qdr743Nf1WevpjuemzPP8cQLP230e2F%2Fw%3D"
+      "value": ""
     },
     "targetContainerName": {
       "value": ""
