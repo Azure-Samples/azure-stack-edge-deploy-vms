@@ -1,0 +1,294 @@
+{
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{
+        "rgName":{
+            "type":"string"
+        },
+        "rgLocation":{
+            "type":"string"
+        },
+        "vmName":{
+            "type":"string",
+            "metadata":{
+                "description":"Name of the VM"
+            }
+        },
+        "adminUsername":{
+            "type":"string",
+            "metadata":{
+                "description":"Username for the Virtual Machine."
+            }
+        },
+        "Password":{
+            "type":"string",
+            "metadata":{
+                "description":"Admin Password"
+            }
+        },
+        "imageName":{
+            "type":"string",
+            "metadata":{
+                "description":"Maps to the Image Name"
+            }
+        },
+        "imageRG":{
+            "type":"string",
+            "metadata":{
+                "description":"Resource Group of Image Name"
+            }
+        },
+        "vmSize":{
+            "type":"string",
+            "metadata":{
+                "description":"The size of the Virtual Machine."
+            }
+        },
+        "vnetName":{
+            "type":"string",
+            "metadata":{
+                "description":"Name of the Virtual Network"
+            }
+        },
+        "vnetRG":{
+            "type":"string",
+            "metadata":{
+                "description":"Resource Group of the Virtual Network"
+            }
+        },
+        "subnetName":{
+            "type":"string",
+            "metadata":{
+                "description":"Name of the Subnet"
+            }
+        },
+        "nicName":{
+            "type":"string",
+            "metadata":{
+                "description":"Name of the Network Interface"
+            }
+        },
+        "IPConfigName":{
+            "type":"string",
+            "metadata":{
+                "description":"Name of IP config"
+            }
+        },
+        "privateIPAddress":{
+            "type":"string",
+            "defaultValue":"",
+            "metadata":{
+                "description":"Private ip address"
+            }
+        },
+        "vmDeploymentName":{
+            "type":"string",
+            "defaultValue": "[concat('vmDeployment', split(newGuid(), '-')[0])]",
+            "metadata":{
+                "description":"VM deployment name"
+            }
+        }
+    },
+    "resources":[
+        {
+            "type":"Microsoft.Resources/resourceGroups",
+            "apiVersion":"2018-05-01",
+            "location":"[parameters('rgLocation')]",
+            "name":"[parameters('rgName')]",
+            "properties":{
+                
+            }
+        },
+        {
+            "type":"Microsoft.Resources/deployments",
+            "apiVersion":"2018-09-01",
+            "name":"[parameters('vmDeploymentName')]",
+            "resourceGroup":"[parameters('rgName')]",
+            "dependsOn":[
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+            ],
+            "properties":{
+                "mode":"incremental",
+                "expressionEvaluationOptions":{
+                    "scope":"inner"
+                },
+                "parameters":{
+                    "vmName":{
+                        "value":"[parameters('vmName')]"
+                    },
+                    "adminUsername":{
+                        "value":"[parameters('adminUsername')]"
+                    },
+                    "Password":{
+                        "value":"[parameters('Password')]"
+                    },
+                    "imageName":{
+                        "value":"[parameters('imageName')]"
+                    },
+                    "imageRG":{
+                        "value":"[parameters('imageRG')]"
+                    },
+                    "vmSize":{
+                        "value":"[parameters('vmSize')]"
+                    },
+                    "vnetName":{
+                        "value":"[parameters('vnetName')]"
+                    },
+                    "vnetRG":{
+                        "value":"[parameters('vnetRG')]"
+                    },
+                    "subnetName":{
+                        "value":"[parameters('subnetName')]"
+                    },
+                    "nicName":{
+                        "value":"[parameters('nicName')]"
+                    },
+                    "IPConfigName":{
+                        "value":"[parameters('IPConfigName')]"
+                    },
+                    "privateIPAddress":{
+                        "value":"[parameters('privateIPAddress')]"
+                    }
+                },
+                "template":{
+                    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion":"1.0.0.0",
+                    "apiProfile":"2018-03-01-hybrid",
+                    "parameters":{
+                        "vmName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Name of the VM"
+                            }
+                        },
+                        "adminUsername":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Username for the Virtual Machine."
+                            }
+                        },
+                        "Password":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Admin Password"
+                            }
+                        },
+                        "imageName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Maps to the Image Name"
+                            }
+                        },
+                        "imageRG":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Resource Group of Image Name"
+                            }
+                        },
+                        "vmSize":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"The size of the Virtual Machine."
+                            }
+                        },
+                        "vnetName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Name of the Virtual Network"
+                            }
+                        },
+                        "vnetRG":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Resource Group of the Virtual Network"
+                            }
+                        },
+                        "subnetName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Name of the Subnet"
+                            }
+                        },
+                        "nicName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Name of the Network Interface"
+                            }
+                        },
+                        "IPConfigName":{
+                            "type":"string",
+                            "metadata":{
+                                "description":"Name of IP config"
+                            }
+                        },
+                        "privateIPAddress":{
+                            "type":"string",
+                            "defaultValue":"",
+                            "metadata":{
+                                "description":"Private ip address"
+                            }
+                        }
+                    },
+                    "variables":{
+                        "location":"dbelocal",
+                        "vnetID":"[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+                        "subnetRef":"[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+                    },
+                    "resources":[
+                        {
+                            "apiVersion":"2017-10-01",
+                            "type":"Microsoft.Network/networkInterfaces",
+                            "name":"[parameters('nicName')]",
+                            "location":"[variables('location')]",
+                            "properties":{
+                                "ipConfigurations":[
+                                    {
+                                        "name":"[parameters('IPConfigName')]",
+                                        "properties":{
+                                            "privateIPAllocationMethod":"[if(equals(parameters('privateIPAddress'), ''), 'Dynamic', 'Static')]",
+                                            "subnet":{
+                                                "id":"[variables('subnetRef')]"
+                                            },
+                                            "privateIPAddress":"[parameters('privateIPAddress')]"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "apiVersion":"2017-03-30",
+                            "type":"Microsoft.Compute/virtualMachines",
+                            "name":"[parameters('vmName')]",
+                            "location":"[variables('location')]",
+                            "dependsOn":[
+                                "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
+                            ],
+                            "properties":{
+                                "hardwareProfile":{
+                                    "vmSize":"[parameters('vmSize')]"
+                                },
+                                "osProfile":{
+                                    "computerName":"[parameters('vmName')]",
+                                    "adminUsername":"[parameters('adminUsername')]",
+                                    "adminPassword":"[parameters('Password')]"
+                                },
+                                "storageProfile":{
+                                    "imageReference":{
+                                        "id":"[resourceId(parameters('imageRG'), 'Microsoft.Compute/images', parameters('imageName'))]"
+                                    }
+                                },
+                                "networkProfile":{
+                                    "networkInterfaces":[
+                                        {
+                                            "id":"[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
