@@ -3,28 +3,28 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
         "rgName":{
-            "value":"cloudrg8"
+            "value":""
         },
         "rgLocation":{
-            "value":"dbelocal"
+            "value":""
         },
         "sourceBlobUri":{
-            "value":"https://databoxedgeutdst.blob.core.windows.net/ingestionjobcontainer/ubuntu18.04waagent.vhd?sp=rw&st=2021-04-21T17:51:16Z&se=2021-04-25T01:51:16Z&sv=2020-02-10&sr=b&sig=A7gVK8qj%2BtIupvU1TKcJkPGgObhep7QQjEQF3KmCRCM%3D"
+            "value":""
         },
         "targetStorageAccountName":{
-            "value":"sacloud8"
+            "value":""
         },
         "targetContainerName":{
-            "value":"con8"
+            "value":""
         },
         "ingestionJobName":{
-            "value":"ingestionjob8"
+            "value":""
         },
         "imageName":{
-            "value":"image8"
+            "value":""
         },
         "osType":{
-            "value":"Linux"
+            "value":""
         }
     }
 }

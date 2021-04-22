@@ -3,43 +3,43 @@
     "contentVersion":"1.0.0.0",
     "parameters":{
         "rgName":{
-            "value":"cloudrg11"
+            "value":""
         },
         "rgLocation":{
-            "value":"dbelocal"
+            "value":""
         },
         "vmName":{
-            "value":"vm11"
+            "value":""
         },
         "adminUsername":{
-            "value":"Administrator"
+            "value":""
         },
         "Password":{
-            "value":"Password1"
+            "value":""
         },
         "imageName":{
-            "value":"image8"
+            "value":""
         },
         "imageRG":{
-            "value":"cloudrg8"
+            "value":""
         },
         "vmSize":{
-            "value":"Standard_D1_v2"
+            "value":""
         },
         "vnetName":{
-            "value":"ASEVNET"
+            "value":""
         },
         "vnetRG":{
-            "value":"ASERG"
+            "value":""
         },
         "subnetName":{
-            "value":"ASEVNETsubNet"
+            "value":""
         },
         "nicName":{
-            "value":"nic11"
+            "value":""
         },
         "IPConfigName":{
-            "value":"ipconfig11"
+            "value":""
         },
         "privateIPAddress":{
             "value":""
