@@ -1,9 +1,7 @@
 ---
 page_type: sample
 languages:
-- azure-cli
-- azurepowershell
-- python
+- c#
 products:
 - azure-stack
 - azure-virtual-machines
@@ -12,7 +10,8 @@ products:
 
 # Deploying VMs on your Azure Stack Edge device
 
-talk about this specific sample
+Using the CreateVMSample you can create a VM using VM deployment template.
+
 
 <!-- 
 Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
