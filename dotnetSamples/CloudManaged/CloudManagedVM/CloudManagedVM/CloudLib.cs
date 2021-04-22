@@ -17,7 +17,7 @@ namespace CloudManagedVM
         static string TenantId;
         static string ClientId;
         static string SubscriptionId;
-        static string ArmEndpoint = "https://management.azure.com/";
+        static string ArmEndpoint;
         static string Token;
         static string SAAS_API_VERSION = "2020-06-01-preview";
         static string LINKED_API_VERSION = "2018-09-01";
@@ -36,10 +36,12 @@ namespace CloudManagedVM
             Client = new RestClient(ArmEndpoint);
         }
 
-        public CloudLib(string accesssToken, string subscriptionId)
+        public CloudLib(string accesssToken, string subscriptionId, string armEndPoint = "management.azure.com")
         {
             Token = accesssToken;
             SubscriptionId = subscriptionId;
+
+            ArmEndpoint = $"https://{armEndPoint}/";
             Client = new RestClient(ArmEndpoint);
         }
 
