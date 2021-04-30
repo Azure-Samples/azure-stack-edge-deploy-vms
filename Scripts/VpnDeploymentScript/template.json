@@ -1,0 +1,374 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworks_vnet_name": {
+      "defaultValue": "dbe-vpn-vnet1",
+      "type": "String"
+    },
+    "azureFirewalls_firewall_name": {
+      "defaultValue": "dbe-vpn-firewall",
+      "type": "String"
+    },
+    "routeTables_routetable_name": {
+      "defaultValue": "dbe-vpn-routetable1",
+      "type": "String"
+    },
+    "publicIPAddresses_VNGW_public_ip_name": {
+      "defaultValue": "dbe-vpn-vngwPip",
+      "type": "String"
+    },
+    "virtualNetworkGateways_VNGW_name": {
+      "defaultValue": "dbe-vpn-vngw",
+      "type": "String"
+    },
+    "publicIPAddresses_firewall_public_ip_name": {
+      "defaultValue": "dbe-vpn-firewallPip",
+      "type": "String"
+    },
+    "localNetworkGateways_LNGW_name": {
+      "defaultValue": "dbe-vpn-lngw",
+      "type": "String"
+    },
+    "connections_vngw_lngw_name": {
+      "defaultValue": "vngw-lngw",
+      "type": "String"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "VnetIPv4AddressSpace": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/16"
+    },
+    "DefaultSubnetIPv4AddressSpace": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/24"
+    },
+    "FirewallSubnetIPv4AddressSpace": {
+      "type": "string",
+      "defaultValue": "192.168.1.0/24"
+    },
+    "GatewaySubnetIPv4AddressSpace": {
+      "type": "string",
+      "defaultValue": "192.168.2.0/24"
+    },
+    "GatewaySubnetIPv4bgpPeeringAddress": {
+      "type": "string",
+      "defaultValue": "192.168.2.254"
+    },
+    "CustomerNetworkAddressSpace": {
+      "type": "string",
+      "defaultValue": "192.168.10.0/23"
+    },
+    "CustomerPublicNetworkAddressSpace": {
+      "type": "string",
+      "defaultValue": "207.68.128.0/24"
+    },
+    "DbeIOTNetworkAddressSpace": {
+      "type": "string",
+      "defaultValue": "10.139.218.0/24"
+    },
+    "AzureVPNsharedKey": {
+      "type": "string",
+      "defaultValue": "1234567"
+    },
+    "DBE-Gateway-ipaddress": {
+      "type": "string",
+      "defaultValue": "207.68.128.115"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Network/localNetworkGateways",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('localNetworkGateways_LNGW_name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "localNetworkAddressSpace": {
+          "addressPrefixes": [
+            "[parameters('CustomerNetworkAddressSpace')]",
+            "[parameters('DbeIOTNetworkAddressSpace')]",
+            "[parameters('CustomerPublicNetworkAddressSpace')]"
+          ]
+        },
+        "gatewayIpAddress": "[parameters('DBE-Gateway-ipaddress')]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('publicIPAddresses_firewall_public_ip_name')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('publicIPAddresses_VNGW_public_ip_name')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Basic"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('routeTables_routetable_name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "disableBgpRoutePropagation": false,
+        "routes": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('virtualNetworks_vnet_name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('VnetIPv4AddressSpace')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "[parameters('DefaultSubnetIPv4AddressSpace')]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+              },
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "GatewaySubnet",
+            "properties": {
+              "addressPrefix": "[parameters('GatewaySubnetIPv4AddressSpace')]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+              },
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "AzureFirewallSubnet",
+            "properties": {
+              "addressPrefix": "[parameters('FirewallSubnetIPv4AddressSpace')]",
+              "serviceEndpoints": [],
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('virtualNetworks_vnet_name'), '/AzureFirewallSubnet')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('FirewallSubnetIPv4AddressSpace')]",
+        "serviceEndpoints": [],
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('virtualNetworks_vnet_name'), '/GatewaySubnet')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('GatewaySubnetIPv4AddressSpace')]",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+        },
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/azureFirewalls",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('azureFirewalls_firewall_name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_firewall_public_ip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), 'AzureFirewallSubnet')]"
+      ],
+      "properties": {
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Alert",
+        "additionalProperties": {},
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_firewall_public_ip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), 'AzureFirewallSubnet')]"
+              }
+            }
+          }
+        ],
+        "networkRuleCollections": [],
+        "applicationRuleCollections": [],
+        "natRuleCollections": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/connections",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('connections_vngw_lngw_name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNGW_name'))]",
+        "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localNetworkGateways_LNGW_name'))]"
+      ],
+      "properties": {
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNGW_name'))]"
+        },
+        "localNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localNetworkGateways_LNGW_name'))]"
+        },
+        "connectionType": "IPsec",
+        "connectionProtocol": "IKEv2",
+        "routingWeight": 0,
+        "sharedKey": "[parameters('AzureVPNsharedKey')]",
+        "enableBgp": false,
+        "usePolicyBasedTrafficSelectors": false,
+        "ipsecPolicies": [],
+        "trafficSelectorPolicies": [],
+        "expressRouteGatewayBypass": false
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworkGateways",
+      "apiVersion": "2019-09-01",
+      "name": "[parameters('virtualNetworkGateways_VNGW_name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNGW_public_ip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), 'GatewaySubnet')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "default",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNGW_public_ip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), 'GatewaySubnet')]"
+              }
+            }
+          }
+        ],
+        "sku": {
+          "name": "VpnGw1",
+          "tier": "VpnGw1"
+        },
+        "gatewayType": "Vpn",
+        "vpnType": "RouteBased",
+        "enableBgp": false,
+        "activeActive": false,
+        "bgpSettings": {
+          "asn": 65515,
+          "bgpPeeringAddress": "[parameters('GatewaySubnetIPv4bgpPeeringAddress')]",
+          "peerWeight": 0
+        },
+        "vpnGatewayGeneration": "Generation1"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(parameters('virtualNetworks_vnet_name'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('DefaultSubnetIPv4AddressSpace')]",
+        "routeTable": {
+          "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTables_routetable_name'))]"
+        },
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    }
+  ],
+  "outputs": {
+    "virtualNetwork": {
+      "type": "object",
+      "value": "[reference(parameters('virtualNetworks_vnet_name'))]"
+    },
+    "virtualNetworkGateway": {
+      "type": "object",
+      "value": "[reference(parameters('virtualNetworkGateways_VNGW_name'))]"
+    },
+    "firewall": {
+      "type": "object",
+      "value": "[reference(parameters('azureFirewalls_firewall_name'))]"
+    },
+    "routeTable": {
+      "type": "object",
+      "value": "[reference(parameters('routeTables_routetable_name'))]"
+    },
+    "localNetworkGateway": {
+      "type": "object",
+      "value": "[reference(parameters('localNetworkGateways_LNGW_name'))]"
+    },
+    "Connection": {
+      "type": "object",
+      "value": "[reference(parameters('connections_vngw_lngw_name'))]"
+    }
+  }
+}
