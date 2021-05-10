@@ -1,0 +1,117 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "apiProfile": "2018-03-01-hybrid",
+    "variables": {
+        "location": "dbelocal",
+        "azurebridgeApiVersion": "2020-07-01",
+        "computeApiVersion": "2017-03-30",
+        "deploymentApiVersion": "2018-09-01",
+        "storageAccountApiVersion": "2016-01-01",
+        "storageAccountNameTidy": "[toLower(trim(parameters('targetStorageAccountName')))]",
+        "targetBlobUri": "[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]",
+        "cleanupDeploymentName": "[concat('cleanup', parameters('ingestionJobName'))]"
+    },
+    "parameters": {
+        "sourceBlobUri": {
+            "type": "string",
+            "metadata": {
+                "description": "The full source blob sas uri."
+            }
+        },
+        "targetStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "The target storage account name."
+            }
+        },
+        "targetContainerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The target container name."
+            }
+        },
+        "ingestionJobName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the blob vhd download job."
+            }
+        },
+        "dataDiskName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the managed disk to be created."
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables('storageAccountApiVersion')]",
+            "name": "[parameters('targetStorageAccountName')]",
+            "location": "[variables('location')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage"
+        },
+        {
+            "apiVersion": "[variables('azurebridgeApiVersion')]",
+            "name": "[concat(variables('location'), '/', parameters('ingestionJobName'))]",
+            "location": "[variables('location')]",
+            "type": "Microsoft.AzureBridge/locations/ingestionJobs",
+            "kind": "BlobDownload",
+            "properties": {
+                "SourceBlobUri": "[parameters('sourceBlobUri')]",
+                "TargetStorageAccountConnectionString": "[concat('DefaultEndpointsProtocol=http;EndpointSuffix=', split(split(reference(parameters('targetStorageAccountName')).primaryEndpoints.blob, 'blob.')[1], '/')[0], ';AccountName=', variables('storageAccountNameTidy'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountNameTidy')), variables('storageAccountApiVersion')).keys[0].value)]",
+                "TargetContainerName": "[parameters('targetContainerName')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('targetStorageAccountName'))]"
+            ]
+        },
+        {
+            "apiVersion": "[variables('computeApiVersion')]",
+            "name": "[parameters('dataDiskName')]",
+            "location": "[variables('location')]",
+            "type": "Microsoft.Compute/disks",
+            "properties": {
+                "creationData": {
+                    "createOption": "Import",
+                    "sourceUri": "[reference(variables('targetBlobUri')).TargetImageBlobUri]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.AzureBridge/locations/ingestionJobs', variables('location'), parameters('ingestionJobName'))]"
+            ]
+        },
+        {
+            "apiVersion": "[variables('deploymentApiVersion')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[variables('cleanupDeploymentName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/disks', parameters('dataDiskName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "[variables('azurebridgeApiVersion')]",
+                            "name": "[concat(variables('location'), '/', parameters('ingestionJobName'))]",
+                            "location": "[variables('location')]",
+                            "type": "Microsoft.AzureBridge/locations/ingestionJobs",
+                            "kind": "BlobCleanup",
+                            "properties": {
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
