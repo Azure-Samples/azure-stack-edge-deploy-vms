@@ -4,7 +4,15 @@
     'eastus',
     'westus2',
     'southcentralus',
-    'centraluseuap')]
+    'centraluseuap',
+    'eastus2euap',
+    'westus',
+    "usdodcentral",
+    "usdodeast",
+    "usgovarizona",
+    "usgoviowa",
+    "usgovtexas",
+    "usgovvirginia")]
     [string]$Location,
 
     [Parameter(Mandatory = $true)]
@@ -26,14 +34,39 @@
     [string]$AppRuleCollectionName,
 
     [Parameter(Mandatory = $true)]
-    [string]$Priority
+    [string]$Priority,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$S2S = $false
 )
 
+function Check-FilePath($filePath)
+{
+    if (-not (Test-Path -Path $filePath))
+    {
+        LogError "error: File not found: $filePath"
+        exit 1
+    }
+}
+
+function Update-ParametersLocation($location)
+{
+    $paramtersFileName = GetParametersFileName 
+    Check-FilePath $paramtersFileName
+
+    $json = Get-Content $paramtersFileName | ConvertFrom-Json
+    $json.parameters.location.value = $location
+    ConvertTo-Json -InputObject $json | Out-File $paramtersFileName
+}
 
 function Azurevpndeploymentstages()
 {
     <#template deployment#>
-    $deploymentInfo=Azurevpndeployment $AzureDeploymentName $ResourceGroupName $PSScriptRoot\parameters.json $PSScriptRoot\template.json
+
+    $templateFileName = GetTemplateFileName
+    $paramtersFileName = GetParametersFileName 
+
+    $deploymentInfo=Azurevpndeployment $AzureDeploymentName $ResourceGroupName $paramtersFileName $templateFileName
 
 
     Log "vpn deployment: $AzureDeploymentName started and status: $($deploymentInfo.State)"
@@ -64,7 +97,9 @@ function Azurevpndeploymentstages()
 
 function AzurecustomizeRouteTableAndFirewallRules()
 {
-    $parameterTags = Get-Content $PSScriptRoot\parameters.json | ConvertFrom-Json
+    $paramtersFileName = GetParametersFileName 
+
+    $parameterTags = Get-Content $paramtersFileName | ConvertFrom-Json
 
     $firewallPublicIpName = $parameterTags.parameters.publicIPAddresses_firewall_public_ip_name.value
     $firewallName = $parameterTags.parameters.azureFirewalls_firewall_name.value
@@ -94,6 +129,37 @@ function AzurecustomizeRouteTableAndFirewallRules()
     ApplyRoutesForRouteTable $serviceTagAndRegionList $AzureIPRangesFilePath $ResourceGroupName $routeTableName $firewallIPv4 $routeNamePrefix $virtualNetworkGatewayRoutesForRouteTable
 }
 
+function GetParametersFileName()
+{
+    # Additional parameters are reported as error by Azure deployment cmdlet if they are not referred by the template. Hence, using different param file as well for P2S.
+    $paramtersFileName = "$PSScriptRoot\parameters-p2s.json" 
+
+    if ($S2S)
+    {
+        $paramtersFileName = "$PSScriptRoot\parameters.json"
+    }
+
+    return $paramtersFileName
+}
+
+function GetTemplateFileName()
+{
+    # There are some differences between S2S template and P2S template. TODO: Check the possibilty of sharing common template stuff.
+    $templateFileName = "$PSScriptRoot\template-p2s.json"
+
+    if ($S2S)
+    {
+        $templateFileName = "$PSScriptRoot\template.json"
+    }
+
+    return $templateFileName
+}
+
+Check-FilePath $AzureAppRuleFilePath
+Check-FilePath $AzureIPRangesFilePath
+
+Update-ParametersLocation $Location
+
 $serviceTagAndRegionList = @()
 $serviceTagAndRegionList += "AzureCloud."+$Location
 $serviceTagAndRegionList += "AzureActiveDirectory"
@@ -105,4 +171,3 @@ Azurevpndeploymentstages  $AzureDeploymentName
 
 AzurecustomizeRouteTableAndFirewallRules 
 exit
-

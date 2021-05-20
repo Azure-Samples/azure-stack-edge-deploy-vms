@@ -38,7 +38,13 @@ $exclusionList = @(
     "13.92.0.0/16", # East US Gateway Manager
     "52.191.128.0/18", # West US2 Gateway Manager
     "13.84.0.0/15", # South Central US Gateway Manager
-    "20.39.0.0/19","52.138.64.0/20","52.138.88.0/21" # East US 2 EUAP Gateway Manager
+    "20.39.0.0/19","52.138.64.0/20","52.138.88.0/21", # East US 2 EUAP Gateway Manager
+    "13.91.0.0/16","40.82.248.0/21","40.112.128.0/17","168.62.192.0/19", # West US Gateway Manager
+    "52.127.48.0/21", # usgovvirginia Gateway Manager
+    "20.140.72.0/21", # usdodcentral Gateway Manager
+    "20.140.64.0/21", # usdodeast Gateway Manager
+    "20.140.56.0/21", # usgovtexas Gateway Manager
+    "20.140.48.0/21" # usgovarizona Gateway Manager
 )
 
 function AddFirewallAppRule()
