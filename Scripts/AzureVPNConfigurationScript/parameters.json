@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworks_vnet_name": {
+      "value": "vnet5"
+    },
+    "azureFirewalls_firewall_name": {
+      "value": "firewall5"
+    },
+    "routeTables_routetable_name": {
+      "value": "routetable5"
+    },
+    "publicIPAddresses_VNGW_public_ip_name": {
+      "value": "vngwpublicip5"
+    },
+    "virtualNetworkGateways_VNGW_name": {
+      "value": "vngw5"
+    },
+    "publicIPAddresses_firewall_public_ip_name": {
+      "value": "firewallpublicip5"
+    },
+    "localNetworkGateways_LNGW_name": {
+      "value": "lngw5"
+    },
+    "connections_vngw_lngw_name": {
+      "value": "dbe-vngw-lngw-connection5"
+    },
+    "location": {
+      "value": "East US"
+    },
+    "VnetIPv4AddressSpace": {
+      "value": "192.174.0.0/16"
+    },
+    "DefaultSubnetIPv4AddressSpace": {
+      "value": "192.174.0.0/24"
+    },
+    "FirewallSubnetIPv4AddressSpace": {
+      "value": "192.174.1.0/24"
+    },
+    "GatewaySubnetIPv4AddressSpace": {
+      "value": "192.174.2.0/24"
+    },
+    "GatewaySubnetIPv4bgpPeeringAddress": {
+      "value": "192.174.2.254"
+    },
+    "CustomerNetworkAddressSpace": {
+      "value": "10.10.14.0/23"
+    },
+    "CustomerPublicNetworkAddressSpace": {
+      "value": "207.68.128.0/24"
+    },
+    "DbeIOTNetworkAddressSpace": {
+      "value": "10.139.218.0/24"
+    },
+    "AzureVPNsharedKey": {
+      "value": "9876543"
+    },
+    "DBE-Gateway-ipaddress": {
+      "value": "207.68.128.117"
+    }
+  }
+}
