@@ -16,7 +16,7 @@ function LoadDlls($dllPath)
     }
 }
 
-$dllPath = "D:\net472" # This should be path of parent folder where your dlls are copied in previous step
+$dllPath = "D:\net472\" # This should be path of parent folder where your dlls are copied in previous step
 LoadDlls $dllPath
 ```
 Your dlls are loaded now.

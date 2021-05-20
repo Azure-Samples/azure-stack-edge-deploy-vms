@@ -66,11 +66,11 @@ namespace CreateVmSample
 
             // Arm template json file path
             // You can use one of the json shared in the VM creation template JSON
-            var templateJson = "<Template File Name>";
+            var templateJson = @"<Template File Name>";
 
             // Arm Template Json Parameter file.
             // You can either pre-populate the parameter file with values or we can programatically fill in the values
-            var templateParameters = "<>";
+            var templateParameters = @"<Template Parameter File Name>";
 
 
             // The example assumes that the VHD has been uploaded to the device.
@@ -272,7 +272,6 @@ namespace CreateVmSample
                     // lets pick the fist image for the sample
                     var img = images.First();
                     ((dynamic)deploymentTemplateParameters).parameters.imageName.value = img.Name;
-                    ((dynamic)deploymentTemplateParameters).parameters.imageRG.value = GetResourceGroup(img.Id);
                 }
             }
 
