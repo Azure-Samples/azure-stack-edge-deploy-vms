@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "LinuxVM" 
+            "value": "LinuxExtVM1" 
         },
         "extensionName": {
             "value": "gpuLinux" 
@@ -16,14 +16,6 @@
         },
         "typeHandlerVersion": {
             "value": "1.3" 
-        },
-        "settings": {
-            "value": {
-            "DRIVER_URL": "https://go.microsoft.com/fwlink/?linkid=874271",
-            "PUBKEY_URL": "http://download.microsoft.com/download/F/F/A/FFAC979D-AD9C-4684-A6CE-C92BB9372A3B/7fa2af80.pub",
-            "CUDA_ver": "10.0.130",
-            "InstallCUDA": "true"
-            }
         }
     }
 }
