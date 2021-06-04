@@ -32,6 +32,12 @@
       "metadata": {
         "description": "Type handler of the extension"
       }
+    },
+    "settings": {
+      "type": "object",
+      "metadata": {
+        "description": "Settings for extension"
+      }
     }
   },
   "variables": {
@@ -46,7 +52,8 @@
         "publisher": "[parameters('publisher')]",
         "type": "[parameters('type')]",
         "typeHandlerVersion": "[parameters('typeHandlerVersion')]",
-        "autoUpgradeMinorVersion": true
+        "autoUpgradeMinorVersion": true,
+        "settings": "[parameters('settings')]"
       }
     }
   ],
