@@ -69,9 +69,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Resources
 
-- Learn more about Azure Stack Edge, see What is Azure Stack Edge?
-- Learn more about how to deploy VMs on Azure Stack Edge, see: 
-    - [Deploy VMs via Azure PowerShell Script](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-powershell-script?branch=release-tzl).
-    - [Deploy VMs via Python/Azure CLI](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-cli-python?branch=release-tzl).
-    - [Deploy VMs via VM templates]().
-    - [Deploy VMs via Azure PowerShell cmdlets](https://review.docs.microsoft.com/azure/databox-online/azure-stack-edge-j-series-deploy-vm-powershell?branch=release-tzl).
+- Learn more about Azure Stack Edge, see [What is Azure Stack Edge Pro](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-overview)?
+- Learn more about how to deploy VMs on Azure Stack Edge, see:
+    - [Deploy VMs via Azure PowerShell Script](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-virtual-machine-powershell-script).
+    - [Deploy VMs via Python/Azure CLI](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-virtual-machine-powershell-script).
+    - [Deploy VMs via VM templates](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-virtual-machine-templates).
+    - [Deploy VMs via Azure PowerShell cmdlets](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-virtual-machine-powershell).
