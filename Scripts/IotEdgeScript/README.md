@@ -15,19 +15,19 @@ ms.author: alkohli
 
 # Sync data from Azure Stack Edge local share to IoT Edge
 
-One liner > This example uses an IoT Edge module to access data from an Azure Stack Edge local share. You can use this example with all Azure Stack Edge SKUs.
+This example uses an IoT Edge module to access data from an Azure Stack Edge local share. You can use this example with all Azure Stack Edge SKUs.
 
-Key concepts
+## Key concepts
 
-- Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
+Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
 
-Usage notes
+## Usage notes
 
-- You'll need to provide...
+You'll need to provide...
 
-License
+## License
 
-- License considerations...
+License considerations...
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ Before you begin, make sure you have:
 
 1. Install PowerShell v6 or later. For guidance, see [Install Azure PowerShell](/powershell/azure/install-az-ps?view=azps-4.7.0).
 
-2. Install the Az.Resources and Az.StackEdge modules in PowerShell. You must run PowerShell as Administrator.
+1. Install the Az.Resources and Az.StackEdge modules in PowerShell. You must run PowerShell as Administrator.
 
    1. If AzureRM is installed, uninstall it:
 
@@ -69,7 +69,7 @@ Before you begin, make sure you have:
 
    ![Screenshot showing the download zip file](./azure-stack-edge-order-download-clone-scripts.png)
 
-    Extract the files from the zip, and note where you saved the scripts.
+    Extract files from the zip, and note where you saved the scripts.
 
 ## Run the script
 
@@ -167,9 +167,9 @@ Use this script to ....
 
 1. Create a deployment that assigns your Edge local share to a deployment module.
 
-   - Remember to [specify the mount option](https://microsoft.github.io/iotedge-k8s-doc/bp/storage/ase.html).
+   Remember to [specify the mount option](https://microsoft.github.io/iotedge-k8s-doc/bp/storage/ase.html).
 
-1. 3.1 > screenshots and details TBD
+1. Artwork > screenshots and details TBD
 
 1. Erika’s deployment looks like this:
 
@@ -251,3 +251,5 @@ Here's a sample output:
    oworld -n iotedge
    ['hello world']
    ['hello world']`
+
+TBD > Details about community contributions
