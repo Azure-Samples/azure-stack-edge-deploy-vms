@@ -10,58 +10,41 @@ ms.topic: sample
 ms.date: 05/12/2022
 ms.author: alkohli
 
-# Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from Azure Stack Edge local share.
+# Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
 ---
 
 # Use an IoT Edge module to access data from an Azure Stack Edge local share
 
-This example shows how to use an IoT Edge module to access data from an Azure Stack Edge local share. You can use this example with all Azure Stack Edge SKUs.
+**Applies to:** Azure Stack Edge Pro 2, Azure Stack Edge Pro GPU, Azure Stack Edge Pro R, Azure Stack Edge Mini R
+
+This example shows how to use an IoT Edge module to access data from an Azure Stack Edge local share.
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- Windows client.
-- Azure subscription to use for your Azure Stack Edge resources.
-- Resource group to use to manage the resources.
-- Azure PowerShell.
-- Download the `MyScript.py` script and store it in a convenient location on your local system.
+- An Azure Stack Edge device that's activated. For more information, see [Activate Azure Stack Edge Pro with GPU](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-activate).
+- A Windows client that can connect to your Azure Stack Edge device.
+- An Azure subscription to use for your Azure Stack Edge resources.
+- Get the sample code.
 
-### Install Azure PowerShell
+### Get the sample code
 
-1. Install PowerShell v6 or later. For guidance, see [Install Azure PowerShell](/powershell/azure/install-az-ps?view=azps-4.7.0).
+1. Go to [Azure Stack Edge deploy VMs in Azure-Samples](https://github.com/Azure-Samples/azure-stack-edge-deploy-vms), and clone or download the zip file for code.
 
-1. Install the Az.Resources and Az.StackEdge modules in PowerShell. You must run PowerShell as Administrator.
+1. Download or clone the zip file to the local system. Extract files from the zip folder, and note where you save the file.
 
-   1. If AzureRM is installed, uninstall it:
-
-      ```powershell
-      PS C:\> Uninstall-AzureRm
-      ```
-
-   1. Install the Az.Resources and Az.StackEdge modules:
-
-      ```powershell
-      PS C:\> Install-Module Az.Resources
-      PS C:\> Install-Module Az.StackEdge
-      ```
-
-      > [!NOTE]
-      > If AzureRM is installed, uninstall it.
-
-### Download the script
-
-1. Go to the [folder that hosts the script](https://github.com/Azure-Samples/azure-stack-edge-deploy-vms/scripts/IotEdgeScript).
-
-1. Download or clone the zip file to the local system. Extract files from the zip, and note where you save the file.
+   ![Screenshot of the clone repo dialog in github.](media/readme/clone-or-download-the-zip-file-5.png)
 
    Contents of the script file:
 
-   `~/helloworld$ cat myscript.py
+   ```python
+   ~/helloworld$ cat myscript.py
     while True:
     with open('/app/helloworld.txt') as f:
     contents = f.readlines()
     print(contents)`
+   ```
 
 ## Step 1. Create and configure an Edge local share
 
@@ -79,26 +62,26 @@ Before you begin, make sure you have:
 
 ## Step 2. Create an app and corresponding container to read from the local share
 
-Create a container image then add the code/app created from the code. Output is an IoT Edge container that will enable you to read from the local share.
+Create a container image using the code. Output is an IoT Edge container that will enable you to read from the local share.
 
 1. Create an Azure Container Registry. Use the following steps to [create an Azure container registry](https://docs.microsoft.com/azure/container-registry/container-registry-get-started-portal).
 
 1. Starting with a file, [build and push the image into the container registry](https://docs.microsoft.com/azure/container-registry/container-registry-quickstart-task-cli#build-and-push-image-from-a-dockerfile).
 
-1. Use the following script to push the app into your container registry.
+   ```python
+   ~/helloworld$ cat Dockerfile
+   FROM python:3
+   ADD myscript.py /
+   CMD [ "python", "./myscript.py" ]`
+   ```
 
-      `~/helloworld$ cat Dockerfile
-       FROM python:3
-       ADD myscript.py /
-       CMD [ "python", "./myscript.py" ]`
-
-The result is a container image that includes the registry with your app.
+The result is an IoT Edge container.
 
 ## Step 3. Create a deployment using the IoT Edge module
 
 You'll now create a deployment using the IoT Edge module that you created in the earlier step.
 
-1. On an Azure Stack Edge device that is activated, make sure that the IoT Edge service is enabled.
+1. On an Azure Stack Edge device that's activated, make sure that the IoT Edge service is enabled.
 
    ![Screenshot that shows the healthy status of the IoT Edge service.](media/readme/iot-edge-service-status-1.png)
 
@@ -110,24 +93,24 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
    1. On the **Module settings** tab, the image URI would be the information from your Azure Container Registry.
 
-      ![Screenshot that shows the image URI for the IoT Edge module.](media/README/iot-edge-module-image-uri-3.png)
+      ![Screenshot that shows the image URI for the IoT Edge module.](media/readme/iot-edge-module-image-uri-3.png)
 
    1. Provide the container create option as shown here:
 
-      ```json
-      "{\"HostConfig\":{\"Mounts\":[
-      {\"Target\":\"/app\",\"Source\":\"myshare1\",\"Type\":\"volume\"}]}}"
+      ```python
+      "{"HostConfig":{"Mounts":[
+      {"Target":"/app","Source":"myshare1","Type":"volume"}]}}"
       ```
 
    1. **Add** the module. The module should show as running.
 
-   1. Select **Review+Create**. The deployment options that you have selected are displayed. Review the options.
+   1. Select **Review + Create**. The deployment options that you have selected are displayed. Review the options.
 
       In your deployment, remember to [specify the mount option](https://microsoft.github.io/iotedge-k8s-doc/bp/storage/ase.html).
 
       In our example, the deployment file looks like this:
 
-      ```json
+      ```python
       {
       "modulesContent": {
       "$edgeAgent": {
@@ -198,13 +181,16 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
       The module should be deployed in a couple minutes. Refresh and the module status should update to running, as shown below.
 
-      ![Screenshot that shows that the helloworld IoT Edge custom module is running.](media/README/helloworld-iot-edge-custom-module-is-running-4.png)
+      ![Screenshot that shows the helloworld IoT Edge custom module is running.](media/readme/helloworld-iot-edge-custom-module-is-running-4.png)
 
 ## Step 4. Review output from the container logs
 
 Here's a sample output:
 
-      `kubectl logs --tail=2 testhelloworld-57758b5f57-rt6jw -c testhell
-       oworld -n iotedge
-       ['hello world']
-       ['hello world']`
+   ```python
+   kubectl logs --tail=2
+   helloworld-57758b5f57-rt6jw -c 
+   helloworld -n iotedge
+   ['hello world']
+   ['hello world']`
+   ```
