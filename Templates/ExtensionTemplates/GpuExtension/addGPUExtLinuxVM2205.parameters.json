@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "LinuxGPUVM" 
+        },
+        "extensionName": {
+            "value": "gpuLinux" 
+        },
+        "publisher": {
+            "value": "Microsoft.HpcCompute" 
+        },
+        "type": {
+            "value": "NvidiaGpuDriverLinux" 
+        },
+        "typeHandlerVersion": {
+            "value": "1.8" 
+        },
+        "settings": {
+            "value": {
+            }
+        }
+    }
+}
