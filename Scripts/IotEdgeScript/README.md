@@ -7,7 +7,7 @@ author: alkohli
 ms.service: databox
 ms.subservice: pod
 ms.topic: sample
-ms.date: 05/13/2022
+ms.date: 06/03/2022
 ms.author: alkohli
 
 # Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
@@ -17,7 +17,7 @@ ms.author: alkohli
 
 **Applies to:** Azure Stack Edge Pro 2, Azure Stack Edge Pro GPU, Azure Stack Edge Pro R, Azure Stack Edge Mini R
 
-This example shows how to use an IoT Edge module to access data from an Azure Stack Edge local share.
+This example shows how to use an IoT Edge module to access data from an Azure Stack Edge local share. This example uses a file named *helloworld.txt* in the local share, and the app will read the contents of the file.
 
 ## Prerequisites
 
