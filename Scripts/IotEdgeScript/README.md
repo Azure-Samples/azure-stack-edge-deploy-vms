@@ -7,7 +7,7 @@ author: alkohli
 ms.service: databox
 ms.subservice: pod
 ms.topic: sample
-ms.date: 06/03/2022
+ms.date: 06/16/2022
 ms.author: alkohli
 
 # Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
