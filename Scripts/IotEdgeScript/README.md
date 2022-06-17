@@ -7,7 +7,7 @@ author: alkohli
 ms.service: databox
 ms.subservice: pod
 ms.topic: sample
-ms.date: 06/16/2022
+ms.date: 06/17/2022
 ms.author: alkohli
 
 # Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
@@ -97,7 +97,7 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
    1. Provide the container create option as shown here:
 
-      ```python
+      ```json
       "{"HostConfig":{"Mounts":[
       {"Target":"/app","Source":"myshare1","Type":"volume"}]}}"
       ```
