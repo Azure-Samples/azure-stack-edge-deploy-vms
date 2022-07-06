@@ -7,7 +7,7 @@ author: alkohli
 ms.service: databox
 ms.subservice: pod
 ms.topic: sample
-ms.date: 06/17/2022
+ms.date: 07/6/2022
 ms.author: alkohli
 
 # Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
@@ -34,7 +34,7 @@ Before you begin, make sure you have:
 
 1. Select **<> Code** and then download the zip file to the local system. Extract files from the zip folder, and note where you save the file.
 
-   ![Screenshot of the download zip dialog in github.](media/readme/clone-or-download-the-zip-file-5.png)
+   ![Screenshot of the download zip dialog in github.](media/clone-or-download-the-zip-file-5.png)
 
    Contents of the script file:
 
@@ -83,17 +83,17 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
 1. On an Azure Stack Edge device that's activated, make sure that the IoT Edge service is enabled.
 
-   ![Screenshot that shows the health status of the IoT Edge service.](media/readme/iot-edge-service-status-1.png)
+   ![Screenshot that shows the health status of the IoT Edge service.](media/iot-edge-service-status-1.png)
 
 1. Configure the Edge compute role. When this role is configured, the **Properties** would show the IoT Hub resource and the IoT Edge device associated with your Azure Stack Edge.
 
-   ![Screenshot that shows properties of the IoT Hub resource and the IoT Edge device associated with your Azure Stack Edge.](media/readme/iot-edge-compute-role-properties-2.png)
+   ![Screenshot that shows properties of the IoT Hub resource and the IoT Edge device associated with your Azure Stack Edge.](media/iot-edge-compute-role-properties-2.png)
 
 1. Select the link for the **IoT Edge device** and deploy the IoT Edge module using the steps described in this article: [Configure and run a module on GPU on Azure Stack Edge Pro device](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-configure-gpu-modules), with the following differences:
 
    1. On the **Module settings** tab, the image URI would be the information from your Azure Container Registry.
 
-      ![Screenshot that shows the image URI from your Azure Container Registry.](media/readme/iot-edge-module-image-uri-3.png)
+      ![Screenshot that shows the image URI from your Azure Container Registry.](media/iot-edge-module-image-uri-3.png)
 
    1. Provide the container create option as shown here:
 
@@ -181,7 +181,7 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
       The module should be deployed in a couple minutes. Refresh and the module status should update to running, as shown below.
 
-      ![Screenshot that shows the helloworld IoT Edge custom module is running.](media/readme/helloworld-iot-edge-custom-module-is-running-4.png)
+      ![Screenshot that shows the helloworld IoT Edge custom module is running.](media/helloworld-iot-edge-custom-module-is-running-4.png)
 
 ## Step 5. Review output from the container logs
 
