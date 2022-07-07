@@ -7,7 +7,7 @@ author: alkohli
 ms.service: databox
 ms.subservice: pod
 ms.topic: sample
-ms.date: 07/6/2022
+ms.date: 07/7/2022
 ms.author: alkohli
 
 # Customer intent: As an IT pro, I want to quickly use an IoT Edge module to access data from an Azure Stack Edge local share.
@@ -39,11 +39,10 @@ Before you begin, make sure you have:
    Contents of the script file:
 
    ```python
-   ~/helloworld$ cat myscript.py
-    while True:
-    with open('/app/helloworld.txt') as f:
-    contents = f.readlines()
-    print(contents)`
+   while True:
+      with open('/app/helloworld.txt') as f:
+         contents = f.readlines()
+         print(contents)
    ```
 
 ## Step 2. Create and configure an Edge local share
@@ -58,7 +57,7 @@ Before you begin, make sure you have:
 
    Use these steps to [connect to the local share](https://docs.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-add-shares#connect-to-the-share).
 
-1. Use File Explorer to add the `HelloWorld.txt` file to the local share. This file is located in the  [IotEdgeScript](https://github.com/Azure-Samples/azure-stack-edge-deploy-vms/IotEdgeScript/) folder.
+1. Use File Explorer to add the `HelloWorld.txt` file to the local share. This file is located in the  [IotEdgeScript](https://github.com/Azure-Samples/azure-stack-edge-deploy-vms/blob/master/Scripts/IotEdgeScript/) folder.
 
 ## Step 3. Create an app and corresponding container to read from the local share
 
@@ -97,10 +96,11 @@ You'll now create a deployment using the IoT Edge module that you created in the
 
    1. Provide the container create option as shown here:
 
-      ```json
-      "{"HostConfig":{"Mounts":[
-      {"Target":"/app","Source":"myshare1","Type":"volume"}]}}"
-      ```
+   ```json
+   {
+   "createOptions": "{\"HostConfig\":\"Mounts\":[{\"Target\":\"/app\",\"Source\":\"myshare1\",\"Type\":\"volume\"}]}}"
+   }
+   ```
 
    1. **Add** the module. The module should show as running.
 
