@@ -40,7 +40,7 @@ Function Set-Login
         $token = $login.Headers["RequestVerificationToken"]
         $headers = @{ 'RequestVerificationToken' = $token }
 
-        # Store $Session and $Headers as globals so that we can use them in the other functions easily
+        # Store $Session and $Headers as globals so that we can easily use them in the other functions
         Set-Variable -Name Session -Value $Session -Scope global
         Set-Variable -Name Headers -Value $headers -Scope global
         Set-Variable -Name BaseUrl -Value $baseUrl -Scope global
