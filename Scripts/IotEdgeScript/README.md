@@ -17,6 +17,9 @@ ms.author: alkohli
 
 **Applies to:** Azure Stack Edge Pro 2, Azure Stack Edge Pro GPU, Azure Stack Edge Pro R, Azure Stack Edge Mini R
 
+> [!NOTE]
+> We strongly recommend that you deploy the latest IoT Edge version in a Linux VM. The managed IoT Edge on Azure Stack Edge uses an older version of IoT Edge runtime that doesn’t have the latest features and patches. For instructions, see how to [Deploy an Ubuntu VM](https://learn.microsoft.com/azure/databox-online/azure-stack-edge-gpu-deploy-iot-edge-linux-vm). For more information on other supported Linux distributions that can run IoT Edge, see [Azure IoT Edge supported systems – Container engines](https://review.learn.microsoft.com/azure/iot-edge/support#linux-containers).
+
 This example shows how to use an IoT Edge module to access data from an Azure Stack Edge local share. This example uses a file named *helloworld.txt* in the local share, and the app will read the contents of the file.
 
 ## Prerequisites
