@@ -40,7 +40,7 @@ Function Set-Login
         $token = $login.Headers["RequestVerificationToken"]
         $headers = @{ 'RequestVerificationToken' = $token }
 
-        # Store $Session and $Headers as globals so that we can easily use them in the other functions
+        # Store $Session and $Headers as globals so that we can use them in the other functions easily
         Set-Variable -Name Session -Value $Session -Scope global
         Set-Variable -Name Headers -Value $headers -Scope global
         Set-Variable -Name BaseUrl -Value $baseUrl -Scope global
@@ -155,6 +155,40 @@ Function Set-DeviceLogConsent
         $body = $logConsent | ConvertTo-Json
 
         Invoke-RestMethod "$($BaseUrl)/api/DeviceConfiguration/supportConsent" -Method Post -WebSession $Session -Body $body -Headers $Headers -ContentType "application/json"
+    }
+}
+
+
+Function Get-DeviceVip
+{
+    [cmdletbinding()]
+    Param
+    (
+    )
+
+    Process
+    {
+        # Session and BaseUrl are populated in Set-Login
+
+        Invoke-RestMethod "$($BaseUrl)/api/DeviceConfiguration/vip" -WebSession $Session
+    }
+}
+
+Function Set-DeviceVip
+{
+    [cmdletbinding()]
+    Param
+    (
+        [object] $vip
+    )
+
+    Process
+    {
+        # Session, Headers and BaseUrl are populated in Set-Login
+
+        $body = $vip | ConvertTo-Json -Depth 10
+
+        Invoke-RestMethod "$($BaseUrl)/api/DeviceConfiguration/vip" -Method Post -WebSession $Session -Body $body -Headers $Headers -ContentType "application/json"
     }
 }
 
