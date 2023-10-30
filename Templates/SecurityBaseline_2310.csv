@@ -57,7 +57,7 @@ Secured-Core Baseline,DeviceGuard RequireMicrosoftSignedBootChain,Registry,HKLM:
 Secured-Core Baseline,DeviceGuard RequirePlatformSecurityFeatures,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard,RequirePlatformSecurityFeatures,integer,1
 Secured-Core Baseline,DeviceGuard Scenarios HypervisorEnforcedCodeIntegrity Enabled,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity,Enabled,integer,1
 Secured-Core Baseline,DeviceGuard Scenarios HypervisorEnforcedCodeIntegrity Locked,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity,Locked,integer,0
-Secured-Core Baseline,DeviceGuard Scenarios HypervisorEnforcedCodeIntegrity Locked,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard,Enabled,integer,1
+Secured-Core Baseline,DeviceGuard Scenarios SystemGuard Enabled,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\SystemGuard,Enabled,integer,1
 Security Baseline,Devices: Allow undock without having to log on,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,UndockWithoutLogon,integer,0
 Security Baseline,Devices: Prevent users from installing printer drivers,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers,AddPrinterDrivers,integer,1
 Security Baseline,Disable MD5,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Schannel\Hashes\MD5,Enabled,integer,0
