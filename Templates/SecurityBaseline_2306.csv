@@ -1,0 +1,309 @@
+﻿Security settings,Type,Location,ValueName,Value
+Audit Audit Policy Change,AuditPolicy,Policy Change,AuditPolicyChange,3
+Audit Authentication Policy Change,AuditPolicy,Policy Change,Authentication Policy Change,3
+Audit Authorization Policy Change,AuditPolicy,Policy Change,Authorization Policy Change,3
+Audit Computer Account Management,AuditPolicy,Account Management,Computer Account Management,3
+Audit Credential Validation,AuditPolicy,Account Logon,Credential Validation,3
+Audit Detailed File Share,AuditPolicy,Object Access,Audit Detailed File Share,2
+Audit directory service access,AuditPolicy,DS Access,directory service access,3
+Audit Directory Service Changes,AuditPolicy,DS Access,Directory Service Changes,3
+Audit events generated when a process is created or starts,AuditPolicy,Detailed Tracking,Audit Process Creation,3
+Audit File Share,AuditPolicy,Object Access,Audit File Share,3
+Audit Group Membership,AuditPolicy,Logon/Logoff,Group Membership,3
+Audit IPsec Driver,AuditPolicy,System,IPsec Driver,3
+Audit Logoff,AuditPolicy,Logon/Logoff,Logoff,3
+Audit MPSSVC Rule-Level Policy Change,AuditPolicy,Policy Change,MPSSVC Rule-Level Policy Change,3
+Audit Other Account Management Events,AuditPolicy,Account Management,Other Account Management Events,3
+Audit Other Logon/Logoff Events,AuditPolicy,Logon/Logoff,Account Lockout,3
+Audit Other Logon/Logoff Events,AuditPolicy,Logon/Logoff,Audit Other Logon/Logoff Events,3
+Audit Other Object Access Events,AuditPolicy,Object Access,Audit Other Object Access Events,3
+Audit Other Policy Change Events,AuditPolicy,Policy Change,Audit Other Policy Change Events,2
+Audit Other System Events,AuditPolicy,System,Other System Events,3
+Audit Removable Storage,AuditPolicy,Object Access,Removable Storage,3
+Audit Security Group Management,AuditPolicy,Account Management,Security Group Management,3
+Audit Security System Extension,AuditPolicy,System,Security State Change,3
+Audit Sensitive Privilege Use,AuditPolicy,Privilege Use,Sensitive Privilege Use,3
+Audit Special Logon,AuditPolicy,Logon/Logoff,Special Logon,3
+Audit System Integrity,AuditPolicy,System,System Integrity,3
+Audit User Account Management,AuditPolicy,User Account Management,User Account Management,3
+Audit when plug and play detects an external device,AuditPolicy,Detailed Tracking,Audit PNP Activity,3
+Accounts: Limit local account use of blank passwords to console logon only,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,LimitBlankPasswordUse,1
+Allow Cortana,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search,AllowCortana,0
+Allow Cortana above lock screen,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search,AllowCortanaAboveLock,0
+Allow ICMP redirects to override OSPF generated routes,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters,EnableICMPRedirect,0
+Allow Input Personalization,Registry,HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization,AllowInputPersonalization,0
+Allow Microsoft accounts to be optional,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,MSAOptional,1
+Allow search and Cortana to use location,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search,AllowSearchToUseLocation,0
+Allow Telemetry,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection,AllowTelemetry,0
+Always prompt for password upon connection,Registry,HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services,fPromptForPassword,1
+Audit: Audit the use of Backup and Restore privilege,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,FullPrivilegeAuditing,00
+Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,SCENoApplyLegacyAuditPolicy,1
+Audit: Shut down system immediately if unable to log security audits,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,CrashOnAuditFail,0
+Block user from showing account details on sign-in,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\System,BlockUserFromShowingAccountDetailsOnSignin,1
+Boot-Start Driver Initialization Policy,Registry,HKLM:\SYSTEM\CurrentControlSet\Policies\EarlyLaunch,DriverLoadPolicy,3
+Configure Attack Surface Reduction rules ,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR,ExploitGuard_ASR_Rules,1
+Configure Automatic Updates,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU,NoAutoUpdate,1
+Configure detection for potentially unwanted applications,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender,PUAProtection,1
+Configure TPM platform validation profile for native UEFI firmware configurations,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE\OSPlatformValidation_UEFI,Enabled,0
+Configure Windows Defender SmartScreen,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\System,EnableSmartScreen,1
+Configuring speculative execution side-channel mitigation FeatureSettingsOverride,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management,FeatureSettingsOverride,16777288
+Configuring speculative execution side-channel mitigation FeatureSettingsOverrideMask,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management,FeatureSettingsOverrideMask,3
+CredSSP AllowEncryptionOracle,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\CredSSP\Parameters,AllowEncryptionOracle,0
+Default AutoRun Behavior,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer,NoAutorun,1
+DeviceGuard EnableVirtualizationBasedSecurity,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard,EnableVirtualizationBasedSecurity,1
+DeviceGuard Locked,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard,Locked,1
+DeviceGuard RequireMicrosoftSignedBootChain,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard,RequireMicrosoftSignedBootChain,1
+DeviceGuard RequirePlatformSecurityFeatures,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard,RequirePlatformSecurityFeatures,1
+DeviceGuard Scenarios HypervisorEnforcedCodeIntegrity Enabled,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity,Enabled,1
+DeviceGuard Scenarios HypervisorEnforcedCodeIntegrity Locked,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity,Locked,0
+Devices: Allow undock without having to log on,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,UndockWithoutLogon,0
+Devices: Prevent users from installing printer drivers,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers,AddPrinterDrivers,1
+Disable MD5,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Schannel\Hashes\MD5,Enabled,0
+Disable schannel ciphers RC4 128/128,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128,Enabled,0
+Disable schannel ciphers RC4 40/128,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128,Enabled,0
+Disable schannel ciphers RC4 56/128,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128,Enabled,0
+Disable schannel ciphers Triple DES 168,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168,Enabled,0
+Disable schannel KeyExchangeAlgorithms Diffie-Hellman,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman,Enabled,0
+Disable SHA1,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Schannel\Hashes\SHA,Enabled,0
+Disable Windows Error Reporting,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting,Disabled,0
+Disallow Autoplay for non-volume devices,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer,NoAutoplayfornonVolume,1
+Disallow Digest authentication,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client,AllowDigest,0
+Do not allow drive redirection,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services,fDisableCdm,1
+Do not allow passwords to be saved,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services,DisablePasswordSaving,1
+Do not display network selection UI,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\System,DontDisplayNetworkSelectionUI,1
+Do not display the password reveal button,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredUI,DisablePasswordReveal,1
+Do not enumerate connected users on domain-joined computers,Registry,HKLM:\Software\Policies\Microsoft\Windows\System,DontEnumerateConnectedUsers,1
+Domain controller: LDAP server signing requirements,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters,LDAPServerIntegrity,2
+Domain controller: Refuse machine account password changes,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,RefusePasswordChange,0
+Domain member: Digitally encrypt or sign secure channel data (always),Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,RequireSignOrSeal,1
+Domain member: Digitally encrypt secure channel data (when possible),Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,SealSecureChannel,1
+Domain member: Digitally sign secure channel data (when possible),Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,SignSecureChannel,1
+Domain member: Disable machine account password changes,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,DisablePasswordChange,0
+Domain member: Maximum machine account password age,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,MaximumPasswordAge,30
+Domain member: Require strong (Windows 2000 or later) session key,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters,RequireStrongKey,1
+DTLS1.0 is not enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\DTLS 1.0\Client,Enabled,0
+DTLS1.0 is not enabled - server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\DTLS 1.0\Server,Enabled,0
+DTLS1.2 is enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\DTLS 1.2\Client,Enabled,1
+DTLS1.2 is enabled - Server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\DTLS 1.2\Server,Enabled,1
+Enable insecure guest logons,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation,AllowInsecureGuestAuth,0
+Enable RPC Endpoint Mapper Client Authentication,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc,EnableAuthEpResolution,1
+Enable Safe DLL search mode,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager,SafeDllSearchMode,1
+Enable Windows Defender Credential Guard without UEFI lock,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,LsaCfgFlags,2
+Ensure Configure Solicited Remote Assistance is set to Disabled,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services,fAllowToGetHelp,0
+Ensure Do not show feedback notifications is set to Enabled,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection,DoNotShowFeedbackNotifications,1
+"Ensure Setup: Specify the maximum log file size (KB) is set to Enabled: 32,768 or greater",Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup,MaxSize,32768
+Enumerate administrator accounts on elevation,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI,EnumerateAdministrators,0
+FVE  EncryptionMethodWithXtsRdv,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,EncryptionMethodWithXtsRdv,7
+FVE EncryptionMethodWithXtsFdv,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,EncryptionMethodWithXtsFdv,7
+FVE EncryptionMethodWithXtsOs,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,EncryptionMethodWithXtsOs,7
+FVE FDVActiveDirectoryBackup,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVActiveDirectoryBackup,1
+FVE FDVActiveDirectoryInfoToStore,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVActiveDirectoryInfoToStore,1
+FVE FDVHideRecoveryPage,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVHideRecoveryPage,0
+FVE FDVManageDRA,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVManageDRA,1
+FVE FDVRecovery,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVRecovery,1
+FVE FDVRecoveryKey,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVRecoveryKey,2
+FVE FDVRecoveryPassword,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVRecoveryPassword,2
+FVE FDVRequireActiveDirectoryBackup,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,FDVRequireActiveDirectoryBackup,0
+FVE OSActiveDirectoryBackup,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSActiveDirectoryBackup,1
+FVE OSActiveDirectoryInfoToStore,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSActiveDirectoryInfoToStore,1
+FVE OSHideRecoveryPage,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSHideRecoveryPage,0
+FVE OSManageDRA,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSManageDRA,1
+FVE OSRecovery,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSRecovery,1
+FVE OSRecoveryKey,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSRecoveryKey,2
+FVE OSRecoveryPassword,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSRecoveryPassword,2
+FVE OSRequireActiveDirectoryBackup,Registry,HKLM:\SOFTWARE\Policies\Microsoft\FVE,OSRequireActiveDirectoryBackup,0
+IE Feature Enable Print Info Disclosure Fix,Registry,HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_ENABLE_PRINT_INFO_DISCLOSURE_FIX,iexplore.exe,1
+Ignore NetBIOS name release requests except from WINS servers,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Netbt\Parameters,NoNameReleaseOnDemand,1
+Interactive logon: Do not require CTRL+ALT+DEL,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,DisableCAD,0
+Interactive logon: Don't display last signed-in,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,DontDisplayLastUserName,1
+Interactive logon: Machine inactivity limit,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,InactivityTimeoutSecs,900
+Interactive logon: Number of previous logons to cache (in case domain controller is not available),Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon,CachedLogonsCount,0
+Interactive logon: Prompt user to change password before expiration,Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon,PasswordExpiryWarning,5
+Interactive logon: Require Domain Controller authentication to unlock workstation,Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon,ForceUnlockLogon,1
+Interactive logon: Require Windows Hello for Business or smart card,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,ScForceOption,0
+Interactive logon: Smart card removal behavior,Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon,ScRemoveOption,1
+IPv6 source routing must be configured to highest protection,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters,DisableIpSourceRouting,2
+Microsoft network client: Digitally sign communications (always),Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters,RequireSecuritySignature,1
+Microsoft network client: Send unencrypted password to third-party SMB servers,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters,EnablePlainTextPassword,0
+Microsoft network server: Amount of idle time required before suspending session,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters,AutoDisconnect,15
+Microsoft network server: Digitally sign communications (always),Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters,RequireSecuritySignature,1
+Microsoft network server: Server SPN target name validation level,Registry,HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters,SMBServerNameHardeningLevel,1
+NetBT NodeType configuration,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\NetBT\Parameters,NodeType,2
+Network access: Do not allow anonymous enumeration of SAM accounts,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,RestrictAnonymousSAM,1
+Network access: Do not allow anonymous enumeration of SAM accounts and shares,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,RestrictAnonymous,1
+Network access: Do not allow storage of passwords and credentials for network authentication,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,DisableDomainCreds,0
+Network access: Let Everyone permissions apply to anonymous users,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,EveryoneIncludesAnonymous,0
+Network access: Restrict anonymous access to Named Pipes and Shares,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters,RestrictNullSessAccess,1
+Network access: Sharing and security model for local accounts,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,ForceGuest,0
+Network security: Allow Local System to use computer identity for NTLM,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,UseMachineId,1
+Network security: Allow LocalSystem NULL session fallback,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0,Allownullsessionfallback,0
+Network security: Configure encryption types allowed for Kerberos,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters,SupportedEncryptionTypes,2147483640
+Network security: Do not store LAN Manager hash value on next password change,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,NoLMHash,1
+Network security: LAN Manager authentication level,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa,LmCompatibilityLevel,5
+Network security: LDAP client signing requirements,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\LDAP,LDAPClientIntegrity,1
+Network security: Minimum session security for NTLM SSP based (including secure RPC) clients,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0,NTLMMinClientSec,537395200
+Network security: Minimum session security for NTLM SSP based (including secure RPC) servers - Require 128-bit encryption,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0,NTLMMinServerSec,537395200
+Prevent downloading of enclosures,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds,DisableEnclosureDownload,1
+Prevent enabling lock screen camera,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization,NoLockScreenCamera,1
+Prevent enabling lock screen slide show,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization,NoLockScreenSlideshow,1
+Prevent users from modifying settings,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender Security Center\App and Browser protection,DisallowExploitProtectionOverride,1
+Process even if the Group Policy objects have not changed,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2},NoGPOListChanges,0
+Prohibit installation and configuration of Network Bridge on your DNS domain network,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections,NC_AllowNetBridge_NLA,0
+Prohibit use of Internet Connection Sharing on your DNS domain network,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Network Connections,NC_ShowSharedAccessUI,0
+Protect against microarchitectural and execution side-channel vulnerabilities,Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Virtualization,MinVmVersionForCpuBasedMitigations,1.0
+Recovery console: Allow floppy copy and access to all drives and all folders,Registry,HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole,SetCommand,0
+Remote host allows delegation of non-exportable credentials,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation,AllowProtectedCreds,1
+Require a password when a computer wakes (on battery),Registry,HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51,DCSettingIndex,1
+Require a password when a computer wakes (plugged in),Registry,HKLM:\SOFTWARE\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51,ACSettingIndex,1
+Require secure RPC communication,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services,fEncryptRPCTraffic,1
+Scan all downloaded files and attachments,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection,DisableIOAVProtection,0
+Scan removable drives,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Scan,DisableRemovableDriveScanning,0
+Send file samples when further analysis is required,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\SpyNet,SubmitSamplesConsent,1
+Set client connection encryption level,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services,MinEncryptionLevel,3
+"Set EccCurves in Cryptography Configuration to NistP384,NistP256",Registry,HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002,EccCurves,"NistP384,NistP256"
+Shutdown: Allow system to be shut down without having to log on,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,ShutdownWithoutLogon,0
+Shutdown: Clear virtual memory pagefile,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management,ClearPageFileAtShutdown,0
+SSL Cryptography Configuration Policies,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002,Functions,"TLS_AES_256_GCM_SHA384,TLS_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+SSL2.0 is not enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client,Enabled,0
+SSL2.0 is not enabled - server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server,Enabled,0
+SSL3.0 is not enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client,Enabled,0
+SSL3.0 is not enabled - server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server,Enabled,0
+System cryptography: Force strong key protection for user keys stored on the computer,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Cryptography,ForceKeyProtection,2
+"System cryptography: Use FIPS compliant algorithms for encryption, hashing, and signing",Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy,STE,1
+System objects: Require case insensitivity for non-Windows subsystems,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Kernel,ObCaseInsensitive,1
+System objects: Strengthen default permissions of internal system objects (e.g. Symbolic Links),Registry,HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager,ProtectionMode,1
+System Policies NtfsEncryptPagingFile,Registry,HKLM:\SYSTEM\CurrentControlSet\Policies,NtfsEncryptPagingFile,1
+System SecurityProviders SCHANNEL EvenLogging,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL,EventLogging,5
+System Services Afd DisableAddressSharing,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Afd\Parameters,DisableAddressSharing,1
+System settings: Use Certificate Rules on Windows Executables for Software Restriction Policies,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers,AuthenticodeEnabled,1
+The system must be configured to prevent IP source routing,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters,DisableIPSourceRouting,2
+TLS1.0 is not enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client,Enabled,0
+TLS1.0 is not enabled - server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server,Enabled,0
+TLS1.1 is not enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client,Enabled,0
+TLS1.1 is not enabled - server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server,Enabled,0
+TLS1.2 is enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client,Enabled,1
+TLS1.2 is enabled - Server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server,Enabled,1
+TLS1.3 is enabled - client,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client,Enabled,1
+TLS1.3 is enabled - Server,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server,Enabled,1
+Turn off app notifications on the lock screen,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\System,DisableLockScreenAppNotifications,1
+Turn off Autoplay,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer,NoDriveTypeAutoRun,255
+Turn off cloud consumer account state content,Registry,HKLM:\Software\Policies\Microsoft\Windows\CloudContent,DisableConsumerAccountStateContent,1
+Turn off downloading of print drivers over HTTP,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers,DisableWebPnPDownload,1
+Turn off Internet Connection Wizard if URL connection is referring to Microsoft.com,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Internet Connection Wizard,ExitOnMSICW,1
+Turn off Inventory Collector,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat,DisableInventory,1
+Turn off Microsoft Defender AntiVirus,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender,DisableAntiSpyware,0
+Turn off multicast name resolution,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient,EnableMulticast,0
+Turn off printing over HTTP,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers,DisableHTTPPrinting,1
+Turn off real-time protection,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection,DisableRealtimeMonitoring,0
+Turn on e-mail scanning,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Scan,DisableEmailScanning,0
+Turn on PowerShell Transcription,Registry,HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription,EnableTranscripting,0
+Turn on script scanning,Registry,HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection,DisableScriptScanning,0
+User Account Control: Admin Approval Mode for the Built-in Administrator account,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,FilterAdministratorToken,1
+User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableUIADesktopToggle,0
+User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,ConsentPromptBehaviorAdmin,1
+User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode,Registry,HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System,ConsentPromptBehaviorAdmin,2
+User Account Control: Behavior of the elevation prompt for standard users,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,ConsentPromptBehaviorUser,0
+User Account Control: Detect application installations and prompt for elevation,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableInstallerDetection,1
+User Account Control: Only elevate executables that are signed and validated,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,ValidateAdminCodeSignatures,0
+User Account Control: Only elevate UIAccess applications that are installed in secure locations,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableSecureUIAPaths,1
+User Account Control: Run all administrators in Admin Approval Mode,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableLUA,1
+User Account Control: Switch to the secure desktop when prompting for elevation,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,PromptOnSecureDesktop,1
+User Account Control: Virtualize file and registry write failures to per-user locations,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,EnableVirtualization,1
+WDigest Authentication must be disabled,Registry,HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest,UseLogonCredential,0
+Windows Defender Signature Updates Interval,Registry,HKLM:\SOFTWARE\Microsoft\Windows Defender\Signature Updates,SignatureUpdateInterval,1
+Windows Defender Signature Updates Schedule Day,Registry,HKLM:\SOFTWARE\Microsoft\Windows Defender\Signature Updates,ScheduleDay,0
+Windows EvenLog System MaxSize,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System,MaxSize,32768
+Windows EventLog Application MaxSize,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application,MaxSize,32768
+Windows EventLog Security MaxSize,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security,MaxSize,196608
+Windows Explorer NoAutoplayfornonVolume,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer,NoAutoplayfornonVolume,1
+Windows Firewall: Domain: Allow unicast response,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile,DisableUnicastResponsesToMulticastBroadcast,0
+Windows Firewall: Domain: Firewall state,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile,EnableFirewall,1
+Windows Firewall: Domain: Inbound connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile,DefaultInboundAction,1
+Windows Firewall: Domain: Logging: Log dropped packets,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging,LogDroppedPackets,1
+Windows Firewall: Domain: Logging: Log successful connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging,LogSuccessfulConnections,1
+Windows Firewall: Domain: Logging: Name,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging,LogFilePath,%SystemRoot%\System32\logfiles\firewall\domainfw.log
+Windows Firewall: Domain: Logging: Size limit (KB),Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging,LogFileSize,16384
+Windows Firewall: Domain: Outbound connections,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile,DefaultOutboundAction,0
+Windows Firewall: Domain: Settings: Apply local connection security rules,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\DomainProfile,AllowLocalIPsecPolicyMerge,1
+Windows Firewall: Domain: Settings: Display a notification,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile,DisableNotifications,1
+Windows Firewall: Private: Allow unicast response,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile,DisableUnicastResponsesToMulticastBroadcast,0
+Windows Firewall: Private: Firewall state,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile,EnableFirewall,1
+Windows Firewall: Private: Inbound connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile,DefaultInboundAction,1
+Windows Firewall: Private: Logging: Log dropped packets,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging,LogDroppedPackets,1
+Windows Firewall: Private: Logging: Log successful connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging,LogSuccessfulConnections,1
+Windows Firewall: Private: Logging: Name,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging,LogFilePath,%SystemRoot%\System32\logfiles\firewall\privatefw.log
+Windows Firewall: Private: Logging: Size limit (KB),Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging,LogFileSize,16384
+Windows Firewall: Private: Outbound connections,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile,DefaultOutboundAction,0
+Windows Firewall: Private: Settings: Apply local connection security rules,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PrivateProfile,AllowLocalIPsecPolicyMerge,1
+Windows Firewall: Private: Settings: Display a notification,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile,DisableNotifications,1
+Windows Firewall: Public: Allow unicast response,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile,DisableUnicastResponsesToMulticastBroadcast,1
+Windows Firewall: Public: Firewall state,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile,EnableFirewall,1
+Windows Firewall: Public: Inbound connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile,DefaultInboundAction,1
+Windows Firewall: Public: Logging: Log dropped packets,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging,LogDroppedPackets,1
+Windows Firewall: Public: Logging: Log successful connections,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging,LogSuccessfulConnections,1
+Windows Firewall: Public: Logging: Name,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging,LogFilePath,%SystemRoot%\System32\logfiles\firewall\publicfw.log
+Windows Firewall: Public: Logging: Size limit (KB),Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging,LogFileSize,16384
+Windows Firewall: Public: Outbound connections,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile,DefaultOutboundAction,0
+Windows Firewall: Public: Settings: Apply local connection security rules,Registry,HKLM:\Software\Policies\Microsoft\WindowsFirewall\PublicProfile,AllowLocalIPsecPolicyMerge,1
+Windows Firewall: Public: Settings: Display a notification,Registry,HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile,DisableNotifications,1
+Windows GroupPolicy NoBackGroundPolicy,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2},NoBackgroundPolicy,0
+Windows Installer AlwaysInstallElevated,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer,AlwaysInstallElevated,0
+Windows Installer EnableUserControl,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Installer,EnableUserControl,0
+Windows LanmanServer AllowInsecureGuestAuth,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\Parameters,AllowInsecureGuestAuth,0
+Windows NetworkProvider HardenedPaths NETLOGON,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths,\\*\NETLOGON,"RequireMutualAuthentication=1,RequireIntegrity=1,RequirePrivacy=1"
+Windows NetworkProvider HardenedPaths SYSVOL,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths,\\*\SYSVOL,"RequireMutualAuthentication=1,RequireIntegrity=1,RequirePrivacy=1"
+Windows Policies System Audit ProcessCreationIncludeCmdLine Enabled,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit,ProcessCreationIncludeCmdLine_Enabled,1
+Windows Policies System DisableAutomaticRestartSignOn,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,DisableAutomaticRestartSignOn,1
+Windows Policies System LocalAccountTokenFilterPolicy,Registry,HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System,LocalAccountTokenFilterPolicy,0
+Windows Powershell ScriptBlockLogging EnableScriptBlockLogging,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging,EnableScriptBlockLogging,1
+Windows Security eventlog behavior reaching max size,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security,Retention,0
+Windows security eventlog WarningLevel threshold percentage,Registry,HKLM:\SYSTEM\CurrentControlSet\Services\Eventlog\Security,WarningLevel,90
+Windows System EnumerateLocalUsers,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\System,EnumerateLocalUsers,0
+Windows WindowsSearch AllowIndexingEncryptedStoresOrItems,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search,AllowIndexingEncryptedStoresOrItems,0
+WindowsNT MitigationOptions MitigationOptions FontBocking,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\MitigationOptions,MitigationOptions_FontBocking,1000000000000
+WindowsNT Rpc RestrictRemoteClients,Registry,HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc,RestrictRemoteClients,1
+Access Credential Manager as a trusted caller,SecurityPolicy,User Rights Assignment,SeTrustedCredManAccessPrivilege,
+Access this computer from the network,SecurityPolicy,User Rights Assignment,SeNetworkLogonRight,"*S-1-5-11,*S-1-5-32-544"
+Accounts: Guest account status,SecurityPolicy,Security Options,EnableGuestAccount,0
+Accounts: Rename guest account,SecurityPolicy,Security Options,NewGuestName,ASBuiltInGuest
+Act as part of the operating system,SecurityPolicy,User Rights Assignment,SeTcbPrivilege,
+Allow log on locally,SecurityPolicy,User Rights Assignment,SeInteractiveLogonRight,*S-1-5-32-544
+Backup files and directories,SecurityPolicy,User Rights Assignment,SeBackupPrivilege,*S-1-5-32-544
+Bypass traverse checking,SecurityPolicy,User Rights Assignment,SeChangeNotifyPrivilege,"*S-1-5-32-544,*S-1-5-11,*S-1-5-32-551,*S-1-5-19,*S-1-5-20"
+Change the system time,SecurityPolicy,User Rights Assignment,SeSystemtimePrivilege,"*S-1-5-19,*S-1-5-32-544"
+Change the time zone,SecurityPolicy,User Rights Assignment,SeTimeZonePrivilege,"*S-1-5-19,*S-1-5-32-544"
+Create a pagefile,SecurityPolicy,User Rights Assignment,SeCreatePagefilePrivilege,*S-1-5-32-544
+Create a token object,SecurityPolicy,User Rights Assignment,SeCreateTokenPrivilege,
+Create global objects,SecurityPolicy,User Rights Assignment,SeCreateGlobalPrivilege,"*S-1-5-19,*S-1-5-20,*S-1-5-32-544,*S-1-5-6"
+Create permanent shared objects,SecurityPolicy,User Rights Assignment,SeCreatePermanentPrivilege,
+Create symbolic links,SecurityPolicy,User Rights Assignment,SeCreateSymbolicLinkPrivilege,"*S-1-5-32-544,*S-1-5-83-0"
+Debug programs,SecurityPolicy,User Rights Assignment,SeDebugPrivilege,*S-1-5-32-544
+Deny access to this computer from the network,SecurityPolicy,User Rights Assignment,SeDenyNetworkLogonRight,*S-1-5-32-546
+Deny log on as a batch job,SecurityPolicy,User Rights Assignment,SeDenyBatchLogonRight,*S-1-5-32-546
+Deny log on locally,SecurityPolicy,User Rights Assignment,SeDenyInteractiveLogonRight,*S-1-5-32-546
+Deny remote desktop access to this computer,SecurityPolicy,User Rights Assignment,SeDenyRemoteInteractiveLogonRight,*S-1-5-32-546
+Enable computer and user accounts to be trusted for delegation,SecurityPolicy,User Rights Assignment,SeEnableDelegationPrivilege,
+Enforce password history,SecurityPolicy,Password Policy,PasswordHistorySize,24
+Force shutdown from a remote system,SecurityPolicy,User Rights Assignment,SeRemoteShutdownPrivilege,*S-1-5-32-544
+Generate security audits,SecurityPolicy,User Rights Assignment,SeAuditPrivilege,"*S-1-5-20,*S-1-5-19,*S-1-5-82-3006700770-424185619-1745488364-794895919-4004696415"
+Impersonate a client after authentication,SecurityPolicy,User Rights Assignment,SeImpersonatePrivilege,"*S-1-5-20,*S-1-5-19,*S-1-5-6,*S-1-5-32-544"
+Increase scheduling priority,SecurityPolicy,User Rights Assignment,SeIncreaseBasePriorityPrivilege,"*S-1-5-32-544,*S-1-5-90-0"
+Load and unload device drivers,SecurityPolicy,User Rights Assignment,SeLoadDriverPrivilege,*S-1-5-32-544
+Lock pages in memory,SecurityPolicy,User Rights Assignment,SeLockMemoryPrivilege,
+Log on as a batch job,SecurityPolicy,User Rights Assignment,SeBatchLogonRight,"*S-1-5-32-544,*S-1-5-32-551,*S-1-5-32-559"
+Log on as a service,SecurityPolicy,User Rights Assignment,SeServiceLogonRight,"*S-1-5-80-0,*S-1-5-83-0"
+Manage auditing and security log,SecurityPolicy,User Rights Assignment,SeSecurityPrivilege,*S-1-5-32-544
+Maximum password age,SecurityPolicy,Password Policy,MaximumPasswordAge,42
+Minimum password age,SecurityPolicy,Password Policy,MinimumPasswordAge,1
+Modify firmware environment values,SecurityPolicy,User Rights Assignment,SeSystemEnvironmentPrivilege,*S-1-5-32-544
+Network access: Allow anonymous SID/name translation,SecurityPolicy,Security Options,LSAAnonymousNameLookup,0
+Network security: Force logoff when logon hours expire,SecurityPolicy,Security Options,ForceLogoffWhenHourExpire,1
+Password must meet complexity requirements,SecurityPolicy,Password Policy,PasswordComplexity,1
+Perform volume maintenance tasks,SecurityPolicy,User Rights Assignment,SeManageVolumePrivilege,*S-1-5-32-544
+Profile single process,SecurityPolicy,User Rights Assignment,SeProfileSingleProcessPrivilege,*S-1-5-32-544
+Profile system performance,SecurityPolicy,User Rights Assignment,SeSystemProfilePrivilege,"*S-1-5-32-544,*S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420"
+Replace a process level token,SecurityPolicy,User Rights Assignment,SeAssignPrimaryTokenPrivilege,"*S-1-5-19,*S-1-5-20"
+Restore files and directories,SecurityPolicy,User Rights Assignment,SeRestorePrivilege,*S-1-5-32-544
+Shut down the system,SecurityPolicy,User Rights Assignment,SeShutdownPrivilege,*S-1-5-32-544
+Store passwords using reversible encryption,SecurityPolicy,Password Policy,ClearTextPassword,0
+Take ownership of files or other objects,SecurityPolicy,User Rights Assignment,SeTakeOwnershipPrivilege,*S-1-5-32-544

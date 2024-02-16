@@ -34,7 +34,7 @@ All documentation and steps are listed here: https://docs.microsoft.com/en-us/az
 
 ## Setup
 
-Open a Powershell window in Administrator mode. 
+Open a Powershell window in Administrator mode.
 
 Update these environments first:
 	

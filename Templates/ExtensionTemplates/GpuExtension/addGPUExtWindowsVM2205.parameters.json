@@ -3,22 +3,25 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "LinuxGPUVM" 
+            "value": "WindowsVM" 
         },
         "extensionName": {
-            "value": "gpuLinux" 
+            "value": "windowsgpuext" 
         },
         "publisher": {
             "value": "Microsoft.HpcCompute" 
         },
         "type": {
-            "value": "NvidiaGpuDriverLinux" 
+            "value": "NvidiaGpuDriverWindows" 
         },
         "typeHandlerVersion": {
-            "value": "1.3" 
+            "value": "1.5" 
         },
         "settings": {
             "value": {
+            "DriverURL" : "http://us.download.nvidia.com/tesla/511.65/511.65-data-center-tesla-desktop-winserver-2016-2019-2022-dch-international.exe",
+            "DriverCertificateUrl" : "https://go.microsoft.com/fwlink/?linkid=871664",
+            "DriverType":"CUDA"
             }
         }
     }
