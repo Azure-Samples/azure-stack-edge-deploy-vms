@@ -4,10 +4,8 @@ using Microsoft.Rest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,15 +69,6 @@ namespace CreateVmSample
         {
             get;
             protected set;
-        }
-
-        static AseServiceClientCredentials()
-        {
-            ServicePointManager.ServerCertificateValidationCallback = new
-                RemoteCertificateValidationCallback
-                (
-                    delegate { return true; }
-                );
         }
 
         public AseServiceClientCredentials(string clientId,

@@ -18,6 +18,7 @@ import random
 import traceback
 import uuid
 import sys
+from datetime import datetime, timedelta
 
 from azure.common.client_factory import get_client_from_cli_profile
 from azure.common.credentials import ServicePrincipalCredentials
@@ -181,12 +182,11 @@ def run_example():
             blob_endpoint=storage_endpoint_suffix,
         )
 
-        # Create a container called 'vmimages'.
-        # Set the permission so the blobs are public.
-        # Upload the created file, use vhd_file_name for the blob name.
+        # Create a private container and upload the VHD.
+        # Generate a short-lived SAS URL for image creation instead of exposing the blob publicly.
         print("\nUploading to Azure Stack Storage as blob:\n\t" + vhd_file_name)
         blob_client = PageBlobService(connection_string=connection_string)
-        container_client = blob_client.create_container(container_name, public_access='container', fail_on_exist=False)
+        container_client = blob_client.create_container(container_name, fail_on_exist=False)
         blob_client.create_blob_from_path(container_name, vhd_file_name, vhd_file_path)
 
         # List the blobs in the container
@@ -195,8 +195,13 @@ def run_example():
         for blob in blob_list:
             print("\t" + blob.name)
 
-        # Construct the blob uri so it can be used to create the VM image
-        blob_uri = urlparse(arm_url).scheme + '://' + blob_client.primary_endpoint + '/' + container_name + '/' + vhd_file_name
+        # Construct a short-lived SAS URI so it can be used to create the VM image.
+        sas_token = blob_client.generate_blob_shared_access_signature(
+            container_name,
+            vhd_file_name,
+            permission='r',
+            expiry=datetime.utcnow() + timedelta(hours=1))
+        blob_uri = urlparse(arm_url).scheme + '://' + blob_client.primary_endpoint + '/' + container_name + '/' + vhd_file_name + '?' + sas_token
 
         # Create image from the VHD
         async_creation = compute_client.images.create_or_update(
