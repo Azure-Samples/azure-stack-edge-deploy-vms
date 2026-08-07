@@ -52,6 +52,11 @@ namespace CreateVmSample
             // you can get this value from the DBE local use
             var hostName = "<ApplianceName>";
 
+            // Optional appliance certificate thumbprint.
+            // Leave this blank to use normal TLS validation.
+            // Set it only when you need to trust a specific ASE certificate for the management and login endpoints.
+            var applianceCertificateThumbprint = "";
+
             // Local Arm Authority URL
             // This is the authority/authenticating website URL
             // You can also find this value from the local UI
@@ -115,8 +120,8 @@ namespace CreateVmSample
 
             // construct a credentials object.
             // If you have changed the domain name of the device you below constructor to consruct the credentials object
-            // var clientCreds = new AseServiceClientCredentials(userName, password, tenantId, managementEndpointUrl, authenticationAuthorityUrl);
-            var clientCreds = new AseServiceClientCredentials(userName, password, tenantId, hostName);
+            // var clientCreds = new AseServiceClientCredentials(userName, password, tenantId, managementEndpointUrl, authenticationAuthorityUrl, applianceCertificateThumbprint);
+            var clientCreds = new AseServiceClientCredentials(userName, password, tenantId, hostName, applianceCertificateThumbprint);
 
             // Once you have created a credentials obejct you can now interact with any Azure SDK component and operate with the device
             
